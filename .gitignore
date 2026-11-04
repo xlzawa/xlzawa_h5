@@ -1,0 +1,29 @@
+# 只提交页面与必要静态资源，其余一律忽略
+
+# 依赖与构建产物
+node_modules/
+dist/
+build/
+.cache/
+
+# 编辑器 / 系统配置
+.vscode/
+.idea/
+*.code-workspace
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# 临时文件与日志
+*.log
+*.tmp
+*.bak
+*.zip
+
+# 截图、预览图等大体积图片（页面用到的皮肤已内嵌进 HTML）
+*.png
+*.jpg
+*.jpeg
+*.webp
+*.gif
+*.psd

@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XLZawa · 小站</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: #f6f8fc;
+            color: #1e293b;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ----- 顶栏 ----- */
+        .topbar {
+            background-color: #ffffff;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 0.8rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .logo {
+            font-weight: 600;
+            font-size: 1.6rem;
+            letter-spacing: -0.02em;
+            color: #0f172a;
+            text-decoration: none;
+            background: linear-gradient(135deg, #1e2b3f, #2d3f5e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .logo span {
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #334155;
+            font-weight: 500;
+            font-size: 1rem;
+            padding: 0.4rem 0.2rem;
+            transition: color 0.2s, border-bottom 0.1s;
+            border-bottom: 2px solid transparent;
+        }
+
+        .nav-links a:hover {
+            color: #0f172a;
+        }
+
+        .nav-links a.active {
+            color: #2563eb;
+            border-bottom-color: #2563eb;
+        }
+
+        /* ----- 主内容容器 ----- */
+        .main-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+            flex: 1;
+            width: 100%;
+        }
+
+        /* 页面卡片通用样式 */
+        .page {
+            display: none;
+            animation: fade 0.2s ease;
+        }
+
+        .page.active-page {
+            display: block;
+        }
+
+        @keyframes fade {
+            from { opacity: 0.5; }
+            to { opacity: 1; }
+        }
+
+        /* ----- 首页布局 (grid) ----- */
+        .home-layout {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 2rem;
+            margin-top: 1rem;
+        }
+
+        /* 左侧：模型与随机图 */
+        .left-showcase {
+            display: flex;
+            flex-direction: column;
+            gap: 1.8rem;
+        }
+
+        .player-card {
+            background: white;
+            padding: 1.5rem;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.03);
+            border: 1px solid #eef2f6;
+            transition: transform 0.2s;
+        }
+
+        .player-card:hover {
+            transform: translateY(-2px);
+            border-color: #cbd5e1;
+        }
+
+        .player-title {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            color: #64748b;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        /* MC 玩家皮肤 3D 展示区 */
+        .mc-model {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background:
+                radial-gradient(ellipse 62% 58% at 50% 44%, #ffffff 0%, rgba(255,255,255,0) 100%),
+                #fbfcfe;
+            padding: 1.2rem 1.2rem 1.2rem;
+            border: 1px solid #e6edf5;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* 淡淡的格子底纹，边缘用遮罩淡出 */
+        .mc-model::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(to right, rgba(148,163,184,0.13) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(148,163,184,0.13) 1px, transparent 1px);
+            background-size: 26px 26px;
+            -webkit-mask-image: radial-gradient(ellipse 58% 62% at 50% 46%, #000 22%, transparent 82%);
+            mask-image: radial-gradient(ellipse 58% 62% at 50% 46%, #000 22%, transparent 82%);
+            pointer-events: none;
+        }
+
+        .mc-viewer {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            width: 100%;
+            max-width: 560px;
+        }
+
+        .mc-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 0.85rem;
+            flex: 0 0 auto;
+        }
+
+        .mc-control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+        }
+
+        .mc-control-label {
+            font-size: 0.66rem;
+            letter-spacing: 0.14em;
+            color: #94a3b8;
+            font-weight: 600;
+            padding-left: 2px;
+        }
+
+        .mc-btn {
+            appearance: none;
+            border: 1px solid #dbe3ec;
+            background: rgba(255,255,255,0.92);
+            color: #475569;
+            font: inherit;
+            font-size: 0.8rem;
+            line-height: 1;
+            padding: 0.45rem 0.55rem;
+            min-width: 3.3rem;
+            cursor: pointer;
+            transition: background 0.15s, color 0.15s, border-color 0.15s, box-shadow 0.15s;
+        }
+
+        .mc-btn:hover {
+            border-color: #b8c6d8;
+            color: #1e293b;
+        }
+
+        .mc-btn.is-active {
+            background: #2563eb;
+            border-color: #2563eb;
+            color: #ffffff;
+            box-shadow: 0 4px 10px rgba(37,99,235,0.26);
+        }
+
+        .mc-btn:focus-visible {
+            outline: 2px solid #93b4f7;
+            outline-offset: 1px;
+        }
+
+        .mc-stage {
+            position: relative;
+            flex: 1 1 auto;
+            max-width: 440px;
+            height: 400px;
+            cursor: grab;
+            touch-action: none;
+        }
+
+        /* 脚下的柔和投影，位于 canvas 下层 */
+        .mc-stage::after {
+            content: "";
+            position: absolute;
+            left: 50%;
+            bottom: 4%;
+            width: 42%;
+            height: 20px;
+            transform: translateX(-50%);
+            background: radial-gradient(ellipse at center, rgba(70,86,110,0.22), rgba(70,86,110,0) 72%);
+            pointer-events: none;
+        }
+
+        .mc-stage:active {
+            cursor: grabbing;
+        }
+
+        .mc-stage canvas {
+            position: relative;
+            z-index: 1;
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        .mc-loading {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            color: #94a3b8;
+            background: rgba(246,248,252,0.55);
+            transition: opacity 0.4s;
+        }
+
+        .mc-loading.is-hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .mc-hint {
+            position: relative;
+            z-index: 1;
+            margin-top: 0.15rem;
+            font-size: 0.72rem;
+            color: #a8b4c4;
+            letter-spacing: 0.02em;
+        }
+
+        .player-name {
+            font-weight: 700;
+            font-size: 1.25rem;
+            letter-spacing: -0.01em;
+            background: #1e293b;
+            color: white;
+            padding: 0.4rem 1.2rem;
+            display: inline-block;
+            margin-top: 0.5rem;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .player-tag {
+            font-size: 0.9rem;
+            color: #475569;
+            margin-top: 0.25rem;
+        }
+
+        /* 随机图片区域 */
+        .random-image-card {
+            background: white;
+            padding: 1rem;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.03);
+            border: 1px solid #eef2f6;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .random-img-label {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #64748b;
+            align-self: flex-start;
+            margin-bottom: 0.8rem;
+            padding-left: 0.3rem;
+        }
+
+        .random-img-wrapper {
+            width: 100%;
+            overflow: hidden;
+            background: #f1f5f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 180px;
+        }
+
+        .random-img-wrapper img {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: opacity 0.3s;
+            object-fit: cover;
+        }
+
+        /* 右侧链接面板 */
+        .right-links {
+            background: white;
+            padding: 1.8rem 1.5rem;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.03);
+            border: 1px solid #eef2f6;
+            height: fit-content;
+        }
+
+        .right-links h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #0f172a;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 0.75rem;
+        }
+
+        .link-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.9rem;
+        }
+
+        .link-list li a {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            color: #1e293b;
+            font-weight: 500;
+            padding: 0.6rem 0.8rem;
+            background: #f8fafc;
+            transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
+            border: 1px solid transparent;
+        }
+
+        .link-list li a:hover {
+            background: #ffffff;
+            border-color: #cbd5e1;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.02);
+            transform: translateX(2px);
+        }
+
+        /* 占位页面样式 */
+        .placeholder-page {
+            background: white;
+            padding: 4rem 2rem;
+            text-align: center;
+            border: 1px solid #eef2f6;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.02);
+            margin-top: 1rem;
+        }
+
+        .placeholder-page h2 {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #0f172a;
+        }
+
+        .placeholder-page p {
+            color: #64748b;
+            font-size: 1.1rem;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        /* ----- 底部备案 ----- */
+        .footer {
+            background: #ffffff;
+            border-top: 1px solid #e2e8f0;
+            padding: 1.2rem 2rem;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #64748b;
+            margin-top: auto;
+        }
+
+        .footer a {
+            color: #3b82f6;
+            text-decoration: none;
+            font-weight: 500;
+            margin: 0 0.2rem;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .icp-note {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .icp-note span {
+            opacity: 0.8;
+        }
+
+        /* 响应式 */
+        @media (max-width: 800px) {
+            .home-layout {
+                grid-template-columns: 1fr;
+            }
+            .topbar {
+                padding: 0.8rem 1rem;
+            }
+            .nav-links {
+                gap: 1.2rem;
+            }
+            .nav-links a {
+                font-size: 0.9rem;
+            }
+            .logo {
+                font-size: 1.3rem;
+            }
+        }
+
+        @media (max-width: 500px) {
+            .nav-links {
+                gap: 0.8rem;
+                flex-wrap: wrap;
+            }
+            .main-container {
+                padding: 1.2rem 1rem;
+            }
+            .player-card, .right-links, .random-image-card {
+                padding: 1.2rem;
+            }
+            .mc-model {
+                padding: 0.9rem 0.7rem 1rem;
+            }
+            .mc-viewer {
+                gap: 0.65rem;
+            }
+            .mc-stage {
+                height: 320px;
+            }
+            .mc-btn {
+                min-width: 2.85rem;
+                font-size: 0.74rem;
+                padding: 0.42rem 0.35rem;
+            }
+            .mc-control-label {
+                font-size: 0.6rem;
+                letter-spacing: 0.1em;
+            }
+            .mc-hint {
+                font-size: 0.68rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶栏 -->
+    <header class="topbar">
+        <a href="#" class="logo" data-page="home">XLZ<span>awa</span></a>
+        <nav class="nav-links">
+            <a href="#" class="active" data-page="home">主页</a>
+            <a href="#" data-page="unused1">未使用页面1</a>
+            <a href="#" data-page="unused2">未使用页面2</a>
+        </nav>
+    </header>
+
+    <!-- 主内容区域 -->
+    <main class="main-container">
+        <!-- 主页 -->
+        <div id="page-home" class="page active-page">
+            <div class="home-layout">
+                <!-- 左侧区域：MC模型 + 随机图 -->
+                <div class="left-showcase">
+                    <!-- MC玩家模型卡片 -->
+                    <div class="player-card">
+                        <div class="player-title">
+                            MINECRAFT 玩家
+                        </div>
+                        <div class="mc-model">
+                            <div class="mc-viewer">
+                                <div class="mc-controls" role="group" aria-label="模型控制">
+                                    <div class="mc-control-group">
+                                        <span class="mc-control-label">视角</span>
+                                        <button type="button" class="mc-btn is-active" data-rotate="off">手动</button>
+                                        <button type="button" class="mc-btn" data-rotate="on">自动</button>
+                                    </div>
+                                    <div class="mc-control-group">
+                                        <span class="mc-control-label">动作</span>
+                                        <button type="button" class="mc-btn is-active" data-anim="idle">站立</button>
+                                        <button type="button" class="mc-btn" data-anim="walk">走路</button>
+                                        <button type="button" class="mc-btn" data-anim="run">跑步</button>
+                                        <button type="button" class="mc-btn" data-anim="fly">飞行</button>
+                                    </div>
+                                </div>
+                                <div class="mc-stage" id="skinStage">
+                                    <canvas id="skinCanvas" aria-label="XiaoLiZiawa2333 的 Minecraft 皮肤 3D 预览"></canvas>
+                                    <div class="mc-loading" id="skinLoading">正在加载皮肤…</div>
+                                </div>
+                            </div>
+                            <div class="mc-hint">拖动旋转视角 · 滚轮缩放</div>
+                            <div class="player-name">XiaoLiZiawa2333</div>
+                            <div class="player-tag">活跃于生存与创造</div>
+                        </div>
+                    </div>
+
+                    <!-- 随机图片 www.dmoe.cc/random.php -->
+                    <div class="random-image-card">
+                        <div class="random-img-label">随机二次元图片</div>
+                        <div class="random-img-wrapper">
+                            <img src="https://www.dmoe.cc/random.php" alt="随机动漫图片" referrerpolicy="no-referrer" loading="lazy">
+                        </div>
+                        <div style="font-size:0.75rem; color:#94a3b8; margin-top:0.6rem;">via dmoe.cc/random.php</div>
+                    </div>
+                </div>
+
+                <!-- 右侧区域：网站链接 -->
+                <aside class="right-links">
+                    <h2>常用链接</h2>
+                    <ul class="link-list">
+                        <li><a href="https://www.dmoe.cc" target="_blank" rel="noopener">dmoe.cc · 随机图</a></li>
+                        <li><a href="https://www.minecraft.net" target="_blank" rel="noopener">Minecraft 官网</a></li>
+                        <li><a href="https://github.com" target="_blank" rel="noopener">GitHub</a></li>
+                        <li><a href="https://www.bilibili.com" target="_blank" rel="noopener">Bilibili</a></li>
+                        <li><a href="https://www.mcbbs.net" target="_blank" rel="noopener">MCBBS</a></li>
+                    </ul>
+                    <div style="margin-top:1.5rem; font-size:0.8rem; color:#94a3b8; border-left:3px solid #3b82f6; padding-left:0.8rem;">
+                        这里是 XiaoLiZiawa2333 的小角落
+                    </div>
+                </aside>
+            </div>
+        </div>
+
+        <!-- 未使用页面1 -->
+        <div id="page-unused1" class="page">
+            <div class="placeholder-page">
+                <h2>未使用页面 1</h2>
+                <p>这个页面还没有内容，也许以后会放些有趣的东西。</p>
+            </div>
+        </div>
+
+        <!-- 未使用页面2 -->
+        <div id="page-unused2" class="page">
+            <div class="placeholder-page">
+                <h2>未使用页面 2</h2>
+                <p>空置中…… 但你可以通过顶栏切换回来。</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- 底部备案区域 -->
+    <footer class="footer">
+        <div class="icp-note">
+            <span>© 2025 XLZawa</span>
+            <span>|</span>
+            <span>ICP备案号：</span>
+            <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener">京ICP备XXXXXXXX号-1</a>
+            <span>（示例）</span>
+        </div>
+        <div style="margin-top:0.5rem; font-size:0.75rem; opacity:0.7;">
+            XiaoLiZiawa2333 的个人站点 · 保留所有权利
+        </div>
+    </footer>
+
+    <!-- 简单的页面切换脚本 -->
+    <script>
+        (function() {
+            const navLinks = document.querySelectorAll('.nav-links a');
+            const pages = {
+                home: document.getElementById('page-home'),
+                unused1: document.getElementById('page-unused1'),
+                unused2: document.getElementById('page-unused2')
+            };
+
+            function switchPage(pageId) {
+                Object.values(pages).forEach(page => {
+                    if (page) page.classList.remove('active-page');
+                });
+
+                const targetPage = pages[pageId];
+                if (targetPage) {
+                    targetPage.classList.add('active-page');
+                }
+
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.dataset.page === pageId) {
+                        link.classList.add('active');
+                    }
+                });
+            }
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const pageId = this.dataset.page;
+                    if (pageId) {
+                        switchPage(pageId);
+                    }
+                });
+            });
+
+            const logo = document.querySelector('.logo');
+            if (logo) {
+                logo.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const pageId = this.dataset.page;
+                    if (pageId && pages[pageId]) {
+                        switchPage(pageId);
+                    }
+                });
+            }
+
+            const activeLink = document.querySelector('.nav-links a.active');
+            if (activeLink) {
+                const initialPage = activeLink.dataset.page;
+                if (initialPage && pages[initialPage]) {
+                    // 主页已激活
+                }
+            } else {
+                const homeLink = document.querySelector('.nav-links a[data-page="home"]');
+                if (homeLink) homeLink.classList.add('active');
+                if (pages.home) pages.home.classList.add('active-page');
+            }
+        })();
+    </script>
+
+    <!-- MC 皮肤 3D 渲染（@daidr/minecraft-skin-renderer） -->
+    <script>
+var MSR=(function(e){Object.defineProperty(e,Symbol.toStringTag,{value:`Module`});let t=new Map;function n(e){t.set(e.name,e)}function r(e){return t.get(e)}function i(e){let t=r(e);return t?.type===`background`?t:void 0}let a=new Map;function o(e){return`backend`in e&&`createRenderer`in e}function s(e){o(e)?a.set(e.backend,e):n(e)}function c(e){return a.get(e)}function l(){return Array.from(a.keys())}let u=function(e){return e[e.Vertex=1]=`Vertex`,e[e.Index=2]=`Index`,e[e.Uniform=4]=`Uniform`,e}({}),d=function(e){return e.Nearest=`nearest`,e.Linear=`linear`,e}({}),f=function(e){return e.Repeat=`repeat`,e.ClampToEdge=`clamp-to-edge`,e.MirrorRepeat=`mirror-repeat`,e}({}),p=function(e){return e.Float32=`float32`,e.Float32x2=`float32x2`,e.Float32x3=`float32x3`,e.Float32x4=`float32x4`,e.Uint8x4=`uint8x4`,e.Uint32=`uint32`,e}({}),m=function(e){return e.TriangleList=`triangle-list`,e.TriangleStrip=`triangle-strip`,e.LineList=`line-list`,e.LineStrip=`line-strip`,e.PointList=`point-list`,e}({}),h=function(e){return e.None=`none`,e.Front=`front`,e.Back=`back`,e}({}),g=function(e){return e.None=`none`,e.Alpha=`alpha`,e.Additive=`additive`,e.Multiply=`multiply`,e}({}),_=function(e){return e.Never=`never`,e.Less=`less`,e.Equal=`equal`,e.LessEqual=`less-equal`,e.Greater=`greater`,e.NotEqual=`not-equal`,e.GreaterEqual=`greater-equal`,e.Always=`always`,e}({});function v(){return`gpu`in navigator}function y(){try{return!!document.createElement(`canvas`).getContext(`webgl2`)}catch{return!1}}function b(){return v()?`webgpu`:y()?`webgl`:null}function x(){let e=0;return()=>e++}let S=x(),C=x(),w=x();var T=class{id;size;usage;gl;buffer;target;disposed=!1;constructor(e,t,n){if(this.id=S(),this.gl=e,this.usage=t,this.size=n.byteLength,t&u.Index?this.target=e.ELEMENT_ARRAY_BUFFER:this.target=e.ARRAY_BUFFER,this.buffer=e.createBuffer(),!this.buffer)throw Error(`Failed to create WebGL buffer`);e.bindBuffer(this.target,this.buffer),e.bufferData(this.target,n,e.DYNAMIC_DRAW),e.bindBuffer(this.target,null)}getNativeBuffer(){return this.buffer}getTarget(){return this.target}update(e,t=0){this.disposed||!this.buffer||(this.gl.bindBuffer(this.target,this.buffer),this.gl.bufferSubData(this.target,t,e),this.gl.bindBuffer(this.target,null))}dispose(){this.disposed||(this.disposed=!0,this.buffer&&=(this.gl.deleteBuffer(this.buffer),null))}};let E={[p.Float32]:{size:1,type:WebGL2RenderingContext.FLOAT,normalized:!1},[p.Float32x2]:{size:2,type:WebGL2RenderingContext.FLOAT,normalized:!1},[p.Float32x3]:{size:3,type:WebGL2RenderingContext.FLOAT,normalized:!1},[p.Float32x4]:{size:4,type:WebGL2RenderingContext.FLOAT,normalized:!1},[p.Uint8x4]:{size:4,type:WebGL2RenderingContext.UNSIGNED_BYTE,normalized:!0},[p.Uint32]:{size:1,type:WebGL2RenderingContext.UNSIGNED_INT,normalized:!1}};var D=class{id;gl;program;vertexShader;fragmentShader;uniformCache=new Map;vao=null;disposed=!1;cullMode;blendMode;depthWrite;depthCompare;primitive;vertexLayout;constructor(e,t){if(this.id=w(),this.gl=e,this.cullMode=t.cullMode??h.Back,this.blendMode=t.blendMode??g.None,this.depthWrite=t.depthWrite??!0,this.depthCompare=t.depthCompare??_.Less,this.primitive=t.primitive??m.TriangleList,this.vertexLayout=t.vertexLayout,this.vertexShader=this.compileShader(e.VERTEX_SHADER,t.vertexShader),this.fragmentShader=this.compileShader(e.FRAGMENT_SHADER,t.fragmentShader),this.program=e.createProgram(),!this.program)throw Error(`Failed to create WebGL program`);if(e.attachShader(this.program,this.vertexShader),e.attachShader(this.program,this.fragmentShader),e.linkProgram(this.program),!e.getProgramParameter(this.program,e.LINK_STATUS)){let t=e.getProgramInfoLog(this.program);throw Error(`Failed to link shader program: ${t}`)}this.vao=e.createVertexArray()}compileShader(e,t){let n=this.gl,r=n.createShader(e);if(!r)throw Error(`Failed to create shader`);if(n.shaderSource(r,t),n.compileShader(r),!n.getShaderParameter(r,n.COMPILE_STATUS)){let t=n.getShaderInfoLog(r);throw n.deleteShader(r),Error(`Failed to compile ${e===n.VERTEX_SHADER?`vertex`:`fragment`} shader: ${t}`)}return r}getNativeProgram(){return this.program}getVAO(){return this.vao}getUniformLocation(e){if(!this.program)return null;let t=this.uniformCache.get(e);if(t!==void 0)return t;let n=this.gl.getUniformLocation(this.program,e);if(!n)return null;let r=this.gl.getProgramParameter(this.program,this.gl.ACTIVE_UNIFORMS),i=this.gl.FLOAT;for(let t=0;t<r;t++){let n=this.gl.getActiveUniform(this.program,t);if(n&&n.name===e){i=n.type;break}}return t={location:n,type:i},this.uniformCache.set(e,t),t}setUniform(e,t){if(!this.program)return;let n=this.gl,r=n.getUniformLocation(this.program,e);if(r){if(typeof t==`number`)n.uniform1f(r,t);else if(t instanceof Float32Array){let e=t.length;e===2?n.uniform2fv(r,t):e===3?n.uniform3fv(r,t):e===4?n.uniform4fv(r,t):e===16||e%16==0?n.uniformMatrix4fv(r,!1,t):n.uniform1fv(r,t)}else if(Array.isArray(t)){let e=t.length;e===2?n.uniform2f(r,t[0],t[1]):e===3?n.uniform3f(r,t[0],t[1],t[2]):e===4&&n.uniform4f(r,t[0],t[1],t[2],t[3])}}}setUniformInt(e,t){if(!this.program)return;let n=this.gl,r=n.getUniformLocation(this.program,e);r&&n.uniform1i(r,t)}getGLPrimitive(){let e=this.gl;switch(this.primitive){case m.TriangleStrip:return e.TRIANGLE_STRIP;case m.LineList:return e.LINES;case m.LineStrip:return e.LINE_STRIP;case m.PointList:return e.POINTS;default:return e.TRIANGLES}}static getFormatInfo(e){return E[e]}static getFormatSize(e){return E[e].size}static getFormatType(e,t){return E[t].type}static isFormatNormalized(e){return E[e].normalized}applyState(){let e=this.gl;if(this.cullMode===h.None?e.disable(e.CULL_FACE):(e.enable(e.CULL_FACE),e.cullFace(this.cullMode===h.Front?e.FRONT:e.BACK)),this.blendMode===g.None)e.disable(e.BLEND);else switch(e.enable(e.BLEND),this.blendMode){case g.Alpha:e.blendFunc(e.SRC_ALPHA,e.ONE_MINUS_SRC_ALPHA);break;case g.Additive:e.blendFunc(e.SRC_ALPHA,e.ONE);break;case g.Multiply:e.blendFunc(e.DST_COLOR,e.ZERO);break}switch(e.depthMask(this.depthWrite),this.depthCompare){case _.Never:e.depthFunc(e.NEVER);break;case _.Less:e.depthFunc(e.LESS);break;case _.Equal:e.depthFunc(e.EQUAL);break;case _.LessEqual:e.depthFunc(e.LEQUAL);break;case _.Greater:e.depthFunc(e.GREATER);break;case _.NotEqual:e.depthFunc(e.NOTEQUAL);break;case _.GreaterEqual:e.depthFunc(e.GEQUAL);break;case _.Always:e.depthFunc(e.ALWAYS);break}}dispose(){if(this.disposed)return;this.disposed=!0;let e=this.gl;this.vao&&=(e.deleteVertexArray(this.vao),null),this.program&&=(e.deleteProgram(this.program),null),this.vertexShader&&=(e.deleteShader(this.vertexShader),null),this.fragmentShader&&=(e.deleteShader(this.fragmentShader),null),this.uniformCache.clear()}},O=class{id;width;height;gl;texture;disposed=!1;constructor(e,t,n={}){if(this.id=C(),this.gl=e,t instanceof HTMLVideoElement?(this.width=t.videoWidth,this.height=t.videoHeight):t instanceof VideoFrame?(this.width=t.displayWidth,this.height=t.displayHeight):(this.width=t.width,this.height=t.height),this.texture=e.createTexture(),!this.texture)throw Error(`Failed to create WebGL texture`);e.bindTexture(e.TEXTURE_2D,this.texture),e.pixelStorei(e.UNPACK_FLIP_Y_WEBGL,!0);let r=this.getGLFilter(n.minFilter??d.Nearest),i=this.getGLFilter(n.magFilter??d.Nearest),a=this.getGLWrap(n.wrapU??f.ClampToEdge),o=this.getGLWrap(n.wrapV??f.ClampToEdge);e.texParameteri(e.TEXTURE_2D,e.TEXTURE_MIN_FILTER,r),e.texParameteri(e.TEXTURE_2D,e.TEXTURE_MAG_FILTER,i),e.texParameteri(e.TEXTURE_2D,e.TEXTURE_WRAP_S,a),e.texParameteri(e.TEXTURE_2D,e.TEXTURE_WRAP_T,o),e.texImage2D(e.TEXTURE_2D,0,e.RGBA,e.RGBA,e.UNSIGNED_BYTE,t),e.pixelStorei(e.UNPACK_FLIP_Y_WEBGL,!1),n.generateMipmaps&&e.generateMipmap(e.TEXTURE_2D),e.bindTexture(e.TEXTURE_2D,null)}getGLFilter(e){let t=this.gl;switch(e){case d.Linear:return t.LINEAR;default:return t.NEAREST}}getGLWrap(e){let t=this.gl;switch(e){case f.Repeat:return t.REPEAT;case f.MirrorRepeat:return t.MIRRORED_REPEAT;default:return t.CLAMP_TO_EDGE}}getNativeTexture(){return this.texture}update(e){if(this.disposed||!this.texture)return;let t=this.gl;t.bindTexture(t.TEXTURE_2D,this.texture),t.texImage2D(t.TEXTURE_2D,0,t.RGBA,t.RGBA,t.UNSIGNED_BYTE,e),t.bindTexture(t.TEXTURE_2D,null)}dispose(){this.disposed||(this.disposed=!0,this.texture&&=(this.gl.deleteTexture(this.texture),null))}},k=class{backend=`webgl`;canvas;pixelRatio;gl;disposed=!1;_width;_height;lastPipelineId=-1;lastVAO=null;constructor(e){this.canvas=e.canvas,this.pixelRatio=e.pixelRatio??globalThis.devicePixelRatio??1;let t={antialias:e.antialias??!0,alpha:!0,depth:!0,stencil:!1,premultipliedAlpha:!1,preserveDrawingBuffer:e.preserveDrawingBuffer??!1,powerPreference:`high-performance`},n=this.canvas.getContext(`webgl2`,t);if(!n)throw Error(`WebGL2 is not supported`);this.gl=n,this._width=this.canvas.width,this._height=this.canvas.height,this.setupGL()}get width(){return this._width}get height(){return this._height}setupGL(){let e=this.gl;e.enable(e.DEPTH_TEST),e.depthFunc(e.LESS),e.enable(e.CULL_FACE),e.cullFace(e.BACK),e.viewport(0,0,this._width,this._height)}createBuffer(e,t){return new T(this.gl,e,t)}async createTexture(e,t){return new O(this.gl,e,t)}createPipeline(e){return new D(this.gl,e)}beginFrame(){this.lastPipelineId=-1,this.lastVAO=null}clear(e,t,n,r){let i=this.gl;i.clearColor(e,t,n,r),i.clear(i.COLOR_BUFFER_BIT|i.DEPTH_BUFFER_BIT)}draw(e){let t=this.gl,n=e.pipeline,r=n.getNativeProgram();if(!r)return;this.lastPipelineId!==n.id&&(t.useProgram(r),n.applyState(),this.lastPipelineId=n.id);let i=n.getVAO();this.lastVAO!==i&&(t.bindVertexArray(i),this.lastVAO=i);let a=n.vertexLayout;for(let n=0;n<e.vertexBuffers.length;n++){let r=e.vertexBuffers[n];t.bindBuffer(t.ARRAY_BUFFER,r.getNativeBuffer());for(let e of a.attributes)t.enableVertexAttribArray(e.location),t.vertexAttribPointer(e.location,D.getFormatSize(e.format),D.getFormatType(t,e.format),D.isFormatNormalized(e.format),a.stride,e.offset)}if(e.indexBuffer){let n=e.indexBuffer;t.bindBuffer(t.ELEMENT_ARRAY_BUFFER,n.getNativeBuffer())}let o=0,{uniforms:s,textures:c}=e.bindGroup;for(let[e,t]of Object.entries(s))n.setUniform(e,t);for(let[e,r]of Object.entries(c)){let i=r;t.activeTexture(t.TEXTURE0+o),t.bindTexture(t.TEXTURE_2D,i.getNativeTexture()),n.setUniformInt(e,o),o++}let l=n.getGLPrimitive();e.indexBuffer&&e.indexCount?t.drawElements(l,e.indexCount,t.UNSIGNED_SHORT,0):e.vertexCount&&t.drawArrays(l,0,e.vertexCount)}endFrame(){}resize(e,t){this._width=Math.floor(e*this.pixelRatio),this._height=Math.floor(t*this.pixelRatio),this.canvas.width=this._width,this.canvas.height=this._height,this.gl.viewport(0,0,this._width,this._height)}dispose(){if(this.disposed)return;this.disposed=!0;let e=this.gl.getExtension(`WEBGL_lose_context`);e&&e.loseContext()}};function ee(e){return new k(e)}let A=`#version 300 es
+
+precision highp float;
+
+// Vertex attributes
+layout(location = 0) in vec3 a_position;
+layout(location = 1) in vec2 a_uv;
+layout(location = 2) in vec3 a_normal;
+layout(location = 3) in float a_boneIndex;
+
+// Uniforms
+uniform mat4 u_modelMatrix;
+uniform mat4 u_viewProjectionMatrix;
+uniform mat4 u_boneMatrices[24];
+
+// Outputs to fragment shader
+out vec2 v_uv;
+out vec3 v_worldNormal;
+
+// [PLUGIN_VERTEX_DECLARATIONS]
+
+void main() {
+    // Get bone transform
+    int boneIdx = int(a_boneIndex);
+    mat4 boneMatrix = u_boneMatrices[boneIdx];
+
+    // Transform position by bone
+    vec4 localPos = boneMatrix * vec4(a_position, 1.0);
+
+    // Transform to world space
+    vec4 worldPos = u_modelMatrix * localPos;
+
+    // Transform normal to world space
+    v_worldNormal = mat3(u_modelMatrix) * mat3(boneMatrix) * a_normal;
+
+    // Pass UV to fragment shader
+    v_uv = a_uv;
+
+    // [PLUGIN_VERTEX_MAIN]
+
+    // Final position
+    gl_Position = u_viewProjectionMatrix * worldPos;
+}
+`,j=`#version 300 es
+
+precision highp float;
+
+// Inputs from vertex shader
+in vec2 v_uv;
+in vec3 v_worldNormal;
+
+// [PLUGIN_FRAGMENT_DECLARATIONS]
+
+// Uniforms
+uniform sampler2D u_skinTexture;
+uniform float u_alphaTest;
+uniform vec3 u_lightDirection;
+uniform float u_ambientIntensity;
+uniform float u_diffuseIntensity;
+
+// Output
+out vec4 fragColor;
+
+void main() {
+    // Sharp bilinear: smooth texel edges while preserving pixel art
+    // NOTE: Use intermediate variables to prevent shader minifier from dropping parentheses
+    vec2 texSize = vec2(textureSize(u_skinTexture, 0));
+    vec2 texelCoord = v_uv * texSize;
+    vec2 texelFloor = floor(texelCoord - 0.5) + 0.5;
+    vec2 texelFrac = texelCoord - texelFloor;
+    vec2 fw = fwidth(texelCoord);
+    vec2 fracShifted = texelFrac - 0.5;
+    vec2 sharpFrac = clamp(fracShifted / fw + 0.5, vec2(0.0), vec2(1.0));
+    vec2 sharpCoord = texelFloor + sharpFrac;
+    vec2 sharpUV = sharpCoord / texSize;
+
+    vec4 texColor = texture(u_skinTexture, sharpUV);
+
+    if (u_alphaTest > 0.0) {
+        // Outer layer: nearest-neighbor alpha to avoid bilinear bleeding
+        ivec2 nearestTexel = clamp(ivec2(floor(texelCoord)), ivec2(0), ivec2(texSize) - 1);
+        float nearestAlpha = texelFetch(u_skinTexture, nearestTexel, 0).a;
+        if (nearestAlpha < u_alphaTest) {
+            discard;
+        }
+        // Fix RGB contamination from bilinear filtering at transparency edges
+        if (texColor.a > 0.001) {
+            texColor.rgb /= texColor.a;
+        }
+        texColor.a = 1.0;
+    } else {
+        // Inner layer: force fully opaque (transparent pixels become black)
+        texColor.a = 1.0;
+    }
+
+    // Lambert lighting
+    vec3 normal = normalize(v_worldNormal);
+    float ndotl = max(dot(normal, u_lightDirection), 0.0);
+    float light = u_ambientIntensity + u_diffuseIntensity * ndotl;
+    fragColor = vec4(texColor.rgb * light, texColor.a);
+
+    // [PLUGIN_FRAGMENT_OUTPUT]
+}
+`,M={VERTEX_DECLARATIONS:`// [PLUGIN_VERTEX_DECLARATIONS]`,VERTEX_MAIN:`// [PLUGIN_VERTEX_MAIN]`,FRAGMENT_DECLARATIONS:`// [PLUGIN_FRAGMENT_DECLARATIONS]`,FRAGMENT_OUTPUT:`// [PLUGIN_FRAGMENT_OUTPUT]`};function N(e,t){let n=e;return n=n.replace(M.VERTEX_DECLARATIONS,``),n=n.replace(M.VERTEX_MAIN,``),n}function P(e,t){let n=e;return n=n.replace(M.FRAGMENT_DECLARATIONS,``),n=n.replace(M.FRAGMENT_OUTPUT,``),n}let te={backend:`webgl`,createRenderer:ee,shaders:{vertex:A,fragment:j},getComposedShaders(){return{vertex:N(A,`webgl`),fragment:P(j,`webgl`)}}};var F=class{id;size;usage;device;buffer;disposed=!1;constructor(e,t,n){this.id=S(),this.device=e,this.usage=t,this.size=n.byteLength;let r=GPUBufferUsage.COPY_DST;t&u.Vertex&&(r|=GPUBufferUsage.VERTEX),t&u.Index&&(r|=GPUBufferUsage.INDEX),t&u.Uniform&&(r|=GPUBufferUsage.UNIFORM),this.buffer=e.createBuffer({size:this.size,usage:r,mappedAtCreation:!0});let i=this.buffer.getMappedRange();new Uint8Array(i).set(new Uint8Array(n.buffer,n.byteOffset,n.byteLength)),this.buffer.unmap()}getNativeBuffer(){return this.buffer}update(e,t=0){this.disposed||this.device.queue.writeBuffer(this.buffer,t,e.buffer,e.byteOffset,e.byteLength)}dispose(){this.disposed||(this.disposed=!0,this.buffer.destroy())}};function I(e){switch(e){case p.Float32:return`float32`;case p.Float32x2:return`float32x2`;case p.Float32x3:return`float32x3`;case p.Float32x4:return`float32x4`;case p.Uint8x4:return`uint8x4`;case p.Uint32:return`uint32`;default:return`float32x3`}}function ne(e=m.TriangleList){switch(e){case m.TriangleStrip:return`triangle-strip`;case m.LineList:return`line-list`;case m.LineStrip:return`line-strip`;case m.PointList:return`point-list`;default:return`triangle-list`}}function re(e=h.Back){switch(e){case h.None:return`none`;case h.Front:return`front`;case h.Back:return`back`;default:return`back`}}function ie(e=_.Less){switch(e){case _.Never:return`never`;case _.Less:return`less`;case _.Equal:return`equal`;case _.LessEqual:return`less-equal`;case _.Greater:return`greater`;case _.NotEqual:return`not-equal`;case _.GreaterEqual:return`greater-equal`;case _.Always:return`always`;default:return`less`}}function ae(e=g.None){switch(e){case g.None:return;case g.Alpha:return{color:{srcFactor:`src-alpha`,dstFactor:`one-minus-src-alpha`,operation:`add`},alpha:{srcFactor:`one`,dstFactor:`one-minus-src-alpha`,operation:`add`}};case g.Additive:return{color:{srcFactor:`src-alpha`,dstFactor:`one`,operation:`add`},alpha:{srcFactor:`one`,dstFactor:`one`,operation:`add`}};case g.Multiply:return{color:{srcFactor:`dst`,dstFactor:`zero`,operation:`add`},alpha:{srcFactor:`dst-alpha`,dstFactor:`zero`,operation:`add`}};default:return}}var oe=class{id;vertexLayout;pipeline;textureBindGroupLayout;disposed=!1;constructor(e,t,n,r,i=1){this.id=w(),this.vertexLayout=t.vertexLayout;let a=e.createShaderModule({code:t.vertexShader}),o={arrayStride:t.vertexLayout.stride,attributes:t.vertexLayout.attributes.map(e=>({shaderLocation:e.location,offset:e.offset,format:I(e.format)}))};this.textureBindGroupLayout=e.createBindGroupLayout({entries:[{binding:0,visibility:GPUShaderStage.FRAGMENT,sampler:{type:`filtering`}},{binding:1,visibility:GPUShaderStage.FRAGMENT,texture:{sampleType:`float`}}]});let s=e.createPipelineLayout({bindGroupLayouts:[r,this.textureBindGroupLayout]});this.pipeline=e.createRenderPipeline({layout:s,vertex:{module:a,entryPoint:`vs_main`,buffers:[o]},fragment:{module:a,entryPoint:`fs_main`,targets:[{format:n,blend:ae(t.blendMode)}]},primitive:{topology:ne(t.primitive),cullMode:re(t.cullMode)},depthStencil:{depthWriteEnabled:t.depthWrite??!0,depthCompare:ie(t.depthCompare),format:`depth24plus`},multisample:{count:i}})}getNativePipeline(){return this.pipeline}getTextureBindGroupLayout(){return this.textureBindGroupLayout}dispose(){this.disposed||=!0}},se=class e{id;width;height;device;texture;textureView;sampler;disposed=!1;updateVersion=0;onDisposeCallback=null;constructor(e,t,n,r,i){this.id=C(),this.device=e,this.texture=t,this.textureView=t.createView(),this.sampler=n,this.width=r,this.height=i}static async create(t,n,r={}){let i,a;n instanceof HTMLVideoElement?(i=n.videoWidth,a=n.videoHeight):n instanceof VideoFrame?(i=n.displayWidth,a=n.displayHeight):(i=n.width,a=n.height);let o=t.createTexture({size:{width:i,height:a},format:`rgba8unorm`,usage:GPUTextureUsage.TEXTURE_BINDING|GPUTextureUsage.COPY_DST|GPUTextureUsage.RENDER_ATTACHMENT}),s;return s=n instanceof ImageBitmap?n:await createImageBitmap(n),t.queue.copyExternalImageToTexture({source:s},{texture:o},{width:i,height:a}),new e(t,o,t.createSampler({minFilter:e.convertFilter(r.minFilter??d.Nearest),magFilter:e.convertFilter(r.magFilter??d.Nearest),addressModeU:e.convertWrap(r.wrapU??f.ClampToEdge),addressModeV:e.convertWrap(r.wrapV??f.ClampToEdge)}),i,a)}setOnDispose(e){this.onDisposeCallback=e}static convertFilter(e){switch(e){case d.Linear:return`linear`;default:return`nearest`}}static convertWrap(e){switch(e){case f.Repeat:return`repeat`;case f.MirrorRepeat:return`mirror-repeat`;default:return`clamp-to-edge`}}getNativeTexture(){return this.texture}getTextureView(){return this.textureView}getSampler(){return this.sampler}update(e){this.disposed||(this.updateVersion++,this.updateAsync(e,this.updateVersion).catch(e=>{console.warn(`WebGPU texture update failed:`,e)}))}async updateAsync(e,t){let n;if(n=e instanceof ImageBitmap?e:await createImageBitmap(e),this.disposed||this.updateVersion!==t){e instanceof ImageBitmap||n.close();return}this.device.queue.copyExternalImageToTexture({source:n},{texture:this.texture},{width:this.width,height:this.height})}dispose(){this.disposed||(this.disposed=!0,this.onDisposeCallback?.(this.id),this.onDisposeCallback=null,this.texture.destroy())}};let ce=1696,le=1664,ue=1668,de=1672,fe=1680;var pe=class e{backend=`webgpu`;canvas;pixelRatio;supportsRenderTargets=!1;device;context;format;disposed=!1;_width;_height;sampleCount;msaaTexture=null;msaaTextureView=null;depthTexture=null;depthTextureView=null;commandEncoder=null;renderPassEncoder=null;currentTextureView=null;uniformBuffers=[];uniformBindGroupLayout;uniformBindGroups=[];uniformData;uniformDataView;uniformFloat32View;currentDrawIndex=0;poolExhaustedWarned=!1;lastPipelineId=-1;textureBindGroupCache=new Map;constructor(e,t,n,r){this.canvas=e.canvas,this.pixelRatio=e.pixelRatio??globalThis.devicePixelRatio??1,this.device=t,this.context=n,this.format=r,this.sampleCount=e.antialias??!0?4:1,this._width=this.canvas.width,this._height=this.canvas.height,this.uniformData=new ArrayBuffer(ce),this.uniformDataView=new DataView(this.uniformData),this.uniformFloat32View=new Float32Array(this.uniformData),this.uniformBindGroupLayout=t.createBindGroupLayout({entries:[{binding:0,visibility:GPUShaderStage.VERTEX|GPUShaderStage.FRAGMENT,buffer:{type:`uniform`}}]});for(let e=0;e<32;e++){let e=t.createBuffer({size:ce,usage:GPUBufferUsage.UNIFORM|GPUBufferUsage.COPY_DST});this.uniformBuffers.push(e),this.uniformBindGroups.push(t.createBindGroup({layout:this.uniformBindGroupLayout,entries:[{binding:0,resource:{buffer:e}}]}))}this.createDepthTexture()}static async create(t){if(!navigator.gpu)throw Error(`WebGPU is not supported`);let n=await navigator.gpu.requestAdapter({powerPreference:`high-performance`});if(!n)throw Error(`Failed to get WebGPU adapter`);let r=await n.requestDevice({requiredFeatures:[],requiredLimits:{}});try{let n=t.canvas.getContext(`webgpu`);if(!n)throw Error(`Failed to get WebGPU context`);let i=navigator.gpu.getPreferredCanvasFormat();return n.configure({device:r,format:i,alphaMode:`premultiplied`}),new e(t,r,n,i)}catch(e){throw r.destroy(),e}}get width(){return this._width}get height(){return this._height}createDepthTexture(){this.depthTexture&&this.depthTexture.destroy(),this.msaaTexture&&this.msaaTexture.destroy(),this.depthTexture=this.device.createTexture({size:{width:this._width,height:this._height},format:`depth24plus`,sampleCount:this.sampleCount,usage:GPUTextureUsage.RENDER_ATTACHMENT}),this.depthTextureView=this.depthTexture.createView(),this.sampleCount>1&&(this.msaaTexture=this.device.createTexture({size:{width:this._width,height:this._height},format:this.format,sampleCount:this.sampleCount,usage:GPUTextureUsage.RENDER_ATTACHMENT}),this.msaaTextureView=this.msaaTexture.createView())}getUniformBindGroupLayout(){return this.uniformBindGroupLayout}getFormat(){return this.format}createBuffer(e,t){return new F(this.device,e,t)}async createTexture(e,t){let n=await se.create(this.device,e,t);return n.setOnDispose(e=>this.invalidateTextureCache(e)),n}createPipeline(e){return new oe(this.device,e,this.format,this.uniformBindGroupLayout,this.sampleCount)}beginFrame(){this.lastPipelineId=-1,this.currentDrawIndex=0,this.poolExhaustedWarned=!1,this.currentTextureView=this.context.getCurrentTexture().createView(),this.commandEncoder=this.device.createCommandEncoder()}clear(e,t,n,r){if(!this.commandEncoder||!this.currentTextureView||!this.depthTextureView)return;let i={colorAttachments:[this.msaaTextureView?{view:this.msaaTextureView,resolveTarget:this.currentTextureView,clearValue:{r:e,g:t,b:n,a:r},loadOp:`clear`,storeOp:`discard`}:{view:this.currentTextureView,clearValue:{r:e,g:t,b:n,a:r},loadOp:`clear`,storeOp:`store`}],depthStencilAttachment:{view:this.depthTextureView,depthClearValue:1,depthLoadOp:`clear`,depthStoreOp:`store`}};this.renderPassEncoder=this.commandEncoder.beginRenderPass(i)}draw(e){if(!this.renderPassEncoder)return;let t=e.pipeline;this.lastPipelineId!==t.id&&(this.renderPassEncoder.setPipeline(t.getNativePipeline()),this.lastPipelineId=t.id);let{uniforms:n}=e.bindGroup,r=this.uniformFloat32View,i=ce,a=0;n.u_modelMatrix&&(r.set(n.u_modelMatrix,0/4),i=Math.min(i,0),a=Math.max(a,64)),n.u_viewProjectionMatrix&&(r.set(n.u_viewProjectionMatrix,64/4),i=Math.min(i,64),a=Math.max(a,128));let o=n[`u_boneMatrices[0]`]||n.u_boneMatrices;if(o&&(r.set(o,128/4),i=Math.min(i,128),a=Math.max(a,1664)),n.u_alphaTest!==void 0&&(this.uniformDataView.setFloat32(le,n.u_alphaTest,!0),i=Math.min(i,le),a=Math.max(a,le+4)),n.u_ambientIntensity!==void 0&&(this.uniformDataView.setFloat32(ue,n.u_ambientIntensity,!0),i=Math.min(i,ue),a=Math.max(a,ue+4)),n.u_diffuseIntensity!==void 0&&(this.uniformDataView.setFloat32(de,n.u_diffuseIntensity,!0),i=Math.min(i,de),a=Math.max(a,de+4)),n.u_lightDirection){let e=n.u_lightDirection;r.set(e,fe/4),i=Math.min(i,fe),a=Math.max(a,fe+16)}let s=this.currentDrawIndex;if(s>=32){this.poolExhaustedWarned||=(console.warn(`WebGPU uniform pool exhausted (max 32 draw calls per frame). Extra draw calls will be skipped.`),!0);return}a>i&&(this.device.queue.writeBuffer(this.uniformBuffers[s],0,this.uniformData,0,ce),this.renderPassEncoder.setBindGroup(0,this.uniformBindGroups[s]),this.currentDrawIndex++);let{textures:c}=e.bindGroup,l=Object.keys(c)[0];if(l){let e=c[l],n=e.id,r=this.textureBindGroupCache.get(n);r&&r.pipelineId!==t.id&&(r=void 0),r||(r={bindGroup:this.device.createBindGroup({layout:t.getTextureBindGroupLayout(),entries:[{binding:0,resource:e.getSampler()},{binding:1,resource:e.getTextureView()}]}),pipelineId:t.id},this.textureBindGroupCache.set(n,r)),this.renderPassEncoder.setBindGroup(1,r.bindGroup)}for(let t=0;t<e.vertexBuffers.length;t++){let n=e.vertexBuffers[t];this.renderPassEncoder.setVertexBuffer(t,n.getNativeBuffer())}if(e.indexBuffer&&e.indexCount){let t=e.indexBuffer;this.renderPassEncoder.setIndexBuffer(t.getNativeBuffer(),`uint16`),this.renderPassEncoder.drawIndexed(e.indexCount)}else e.vertexCount&&this.renderPassEncoder.draw(e.vertexCount)}endFrame(){this.renderPassEncoder&&=(this.renderPassEncoder.end(),null),this.commandEncoder&&=(this.device.queue.submit([this.commandEncoder.finish()]),null),this.currentTextureView=null}resize(e,t){this._width=Math.floor(e*this.pixelRatio),this._height=Math.floor(t*this.pixelRatio),this.canvas.width=this._width,this.canvas.height=this._height,this.createDepthTexture()}invalidateTextureCache(e){this.textureBindGroupCache.delete(e)}dispose(){if(!this.disposed){this.disposed=!0,this.renderPassEncoder&&=(this.renderPassEncoder.end(),null),this.commandEncoder&&=(this.device.queue.submit([this.commandEncoder.finish()]),null),this.textureBindGroupCache.clear(),this.msaaTextureView=null,this.msaaTexture&&=(this.msaaTexture.destroy(),null),this.depthTextureView=null,this.depthTexture&&=(this.depthTexture.destroy(),null),this.currentTextureView=null;for(let e of this.uniformBuffers)e.destroy();this.uniformBuffers.length=0,this.uniformBindGroups.length=0}}};async function me(e){return pe.create(e)}let he=`
+// Uniform buffer layout
+// Total size: 1696 bytes (aligned to 16)
+// - modelMatrix:          64 bytes  (offset 0)
+// - viewProjectionMatrix: 64 bytes  (offset 64)
+// - boneMatrices:         1536 bytes (offset 128, 24 * 64)
+// - alphaTest:            4 bytes   (offset 1664)
+// - ambientIntensity:     4 bytes   (offset 1668)
+// - diffuseIntensity:     4 bytes   (offset 1672)
+// - _pad:                 4 bytes   (offset 1676)
+// - lightDirection:       12 bytes  (offset 1680) + 4 bytes padding
+
+struct Uniforms {
+  modelMatrix: mat4x4<f32>,
+  viewProjectionMatrix: mat4x4<f32>,
+  boneMatrices: array<mat4x4<f32>, 24>,
+  alphaTest: f32,
+  ambientIntensity: f32,
+  diffuseIntensity: f32,
+  _pad: f32,
+  lightDirection: vec3<f32>,
+}
+
+@group(0) @binding(0) var<uniform> uniforms: Uniforms;
+
+@group(1) @binding(0) var texSampler: sampler;
+@group(1) @binding(1) var skinTexture: texture_2d<f32>;
+
+struct VertexInput {
+  @location(0) position: vec3<f32>,
+  @location(1) uv: vec2<f32>,
+  @location(2) normal: vec3<f32>,
+  @location(3) boneIndex: f32,
+}
+
+struct VertexOutput {
+  @builtin(position) position: vec4<f32>,
+  @location(0) uv: vec2<f32>,
+  @location(1) worldNormal: vec3<f32>,
+}
+
+@vertex
+fn vs_main(input: VertexInput) -> VertexOutput {
+  var output: VertexOutput;
+
+  // Get bone transform
+  let boneIdx = u32(input.boneIndex);
+  let boneMatrix = uniforms.boneMatrices[boneIdx];
+
+  // Transform position by bone
+  let localPos = boneMatrix * vec4<f32>(input.position, 1.0);
+
+  // Transform to world space
+  let worldPos = uniforms.modelMatrix * localPos;
+
+  // Pass UV to fragment shader
+  output.uv = input.uv;
+
+  // Transform normal to world space
+  let modelMat3 = mat3x3<f32>(uniforms.modelMatrix[0].xyz, uniforms.modelMatrix[1].xyz, uniforms.modelMatrix[2].xyz);
+  let boneMat3 = mat3x3<f32>(boneMatrix[0].xyz, boneMatrix[1].xyz, boneMatrix[2].xyz);
+  output.worldNormal = modelMat3 * boneMat3 * input.normal;
+
+  // Final position
+  output.position = uniforms.viewProjectionMatrix * worldPos;
+
+  return output;
+}
+
+@fragment
+fn fs_main(input: VertexOutput) -> @location(0) vec4<f32> {
+  // Sharp bilinear: smooth texel edges while preserving pixel art
+  // NOTE: Use intermediate variables to prevent shader minifier from dropping parentheses
+  let texSize = vec2<f32>(textureDimensions(skinTexture));
+  let texelCoord = input.uv * texSize;
+  let texelFloor = floor(texelCoord - 0.5) + 0.5;
+  let texelFrac = texelCoord - texelFloor;
+  let fw = fwidth(texelCoord);
+  let fracShifted = texelFrac - 0.5;
+  let sharpFrac = clamp(fracShifted / fw + 0.5, vec2(0.0), vec2(1.0));
+  let sharpCoord = texelFloor + sharpFrac;
+  let sharpUV = sharpCoord / texSize;
+
+  var texColor = textureSample(skinTexture, texSampler, sharpUV);
+
+  if (uniforms.alphaTest > 0.0) {
+    // Outer layer: nearest-neighbor alpha to avoid bilinear bleeding
+    let nearestTexel = clamp(vec2<i32>(floor(texelCoord)), vec2<i32>(0), vec2<i32>(texSize) - 1);
+    let nearestAlpha = textureLoad(skinTexture, nearestTexel, 0).a;
+    if (nearestAlpha < uniforms.alphaTest) {
+      discard;
+    }
+    // Fix RGB contamination from bilinear filtering at transparency edges
+    if (texColor.a > 0.001) {
+      texColor = vec4<f32>(texColor.rgb / texColor.a, texColor.a);
+    }
+    texColor.a = 1.0;
+  } else {
+    // Inner layer: force fully opaque (transparent pixels become black)
+    texColor.a = 1.0;
+  }
+
+  // Lambert lighting
+  let normal = normalize(input.worldNormal);
+  let ndotl = max(dot(normal, uniforms.lightDirection), 0.0);
+  let light = uniforms.ambientIntensity + uniforms.diffuseIntensity * ndotl;
+  return vec4<f32>(texColor.rgb * light, texColor.a);
+}
+`;function ge(e){return e}let _e={backend:`webgpu`,createRenderer:me,shaders:{vertex:he,fragment:he},getComposedShaders(){let e=ge(he);return{vertex:e,fragment:e}}};function L(e,t,n,r,i,a=`standard`){let o=e,s=e+i,c=e+i,l=e+i+n,u=e+i+n,d=e+i+n+i,f=e+i+n+i,p=e+i+n+i+n,m=t+i,h=t+i+r,g=t,_=t+i;return a===`cape`?{right:{u1:o,v1:m,u2:s,v2:h},front:{u1:f,v1:m,u2:p,v2:h},left:{u1:u,v1:m,u2:d,v2:h},back:{u1:c,v1:m,u2:l,v2:h},top:{u1:c,v1:g,u2:l,v2:_},bottom:{u1:u,v1:g,u2:u+n,v2:_}}:a===`elytra`?{left:{u1:s,v1:m,u2:o,v2:h},front:{u1:l,v1:m,u2:c,v2:h},right:{u1:d,v1:m,u2:u,v2:h},back:{u1:p,v1:m,u2:f,v2:h},top:{u1:c,v1:g,u2:l,v2:_},bottom:{u1:u,v1:g,u2:u+n,v2:_}}:{right:{u1:o,v1:m,u2:s,v2:h},front:{u1:c,v1:m,u2:l,v2:h},left:{u1:u,v1:m,u2:d,v2:h},back:{u1:f,v1:m,u2:p,v2:h},top:{u1:c,v1:g,u2:l,v2:_},bottom:{u1:u,v1:g,u2:u+n,v2:_}}}function ve(){return{head:{inner:L(0,0,8,8,8),outer:L(32,0,8,8,8)},body:{inner:L(16,16,8,12,4),outer:L(16,32,8,12,4)},rightArm:{inner:L(40,16,4,12,4),outer:L(40,32,4,12,4)},leftArm:{inner:L(32,48,4,12,4),outer:L(48,48,4,12,4)},rightLeg:{inner:L(0,16,4,12,4),outer:L(0,32,4,12,4)},leftLeg:{inner:L(16,48,4,12,4),outer:L(0,48,4,12,4)}}}function ye(){let e=ve();return{head:e.head,body:e.body,rightLeg:e.rightLeg,leftLeg:e.leftLeg,rightArm:{inner:L(40,16,3,12,4),outer:L(40,32,3,12,4)},leftArm:{inner:L(32,48,3,12,4),outer:L(48,48,3,12,4)}}}function be(e){return e===`slim`?ye():ve()}function xe(e,t){return e===t*2}function Se(e){let t=e.width,n=e.height;if(t===n)return e;let r=t/64,i=new ImageData(t,t),a=e.data,o=i.data;for(let e=0;e<n;e++)for(let n=0;n<t;n++){let r=(e*t+n)*4;o[r]=a[r],o[r+1]=a[r+1],o[r+2]=a[r+2],o[r+3]=a[r+3]}let s=r;return Ce(a,o,t,Math.round(40*s),Math.round(16*s),Math.round(32*s),Math.round(48*s),Math.round(16*s),Math.round(16*s)),Ce(a,o,t,0,Math.round(16*s),Math.round(16*s),Math.round(48*s),Math.round(16*s),Math.round(16*s)),i}function Ce(e,t,n,r,i,a,o,s,c){for(let l=0;l<c;l++)for(let c=0;c<s;c++){let u=((i+l)*n+(r+s-1-c))*4,d=((o+l)*n+(a+c))*4;t[d]=e[u],t[d+1]=e[u+1],t[d+2]=e[u+2],t[d+3]=e[u+3]}}function we(e){return typeof e==`object`&&!!e&&`width`in e&&`height`in e&&`complete`in e}async function Te(e){if(we(e))return e.complete?e:new Promise((t,n)=>{e.addEventListener(`load`,()=>t(e)),e.addEventListener(`error`,n)});if(e instanceof ImageBitmap){let t=document.createElement(`canvas`);return t.width=e.width,t.height=e.height,t.getContext(`2d`).drawImage(e,0,0),Te(t.toDataURL())}let t=e instanceof Blob?URL.createObjectURL(e):e,n=new Image;return typeof e==`string`&&!e.startsWith(`data:`)&&(n.crossOrigin=`anonymous`),new Promise((r,i)=>{n.addEventListener(`load`,()=>{e instanceof Blob&&URL.revokeObjectURL(t),r(n)}),n.addEventListener(`error`,n=>{e instanceof Blob&&URL.revokeObjectURL(t),i(Error(`Failed to load image: ${n.type}`))}),n.src=t})}async function Ee(e){if(e instanceof ImageBitmap)return e;if(e instanceof Blob)return createImageBitmap(e);let t=await Te(e);return createImageBitmap(t)}let De=Ee;function Oe(e){let t=document.createElement(`canvas`),n=e.width,r=e.height;t.width=n,t.height=r;let i=t.getContext(`2d`);return i.drawImage(e,0,0),i.getImageData(0,0,n,r)}async function ke(e){let t=await Te(e),n=t.width,r=t.height;if(xe(n,r)){let e=Se(Oe(t)),r=document.createElement(`canvas`);return r.width=n,r.height=n,r.getContext(`2d`).putImageData(e,0,0),createImageBitmap(r)}return createImageBitmap(t)}async function Ae(e){return Ee(e)}async function je(e){return Ee(e)}async function Me(e=64,t=64){let n=document.createElement(`canvas`);n.width=e,n.height=t;let r=n.getContext(`2d`);for(let n=0;n<t;n+=8)for(let t=0;t<e;t+=8)r.fillStyle=(t/8+n/8)%2==0?`#ff00ff`:`#000000`,r.fillRect(t,n,8,8);return createImageBitmap(n)}function Ne(e=2){let t=e/2,n=new Float32Array([-t,-t,t,t,-t,t,t,t,t,-t,t,t,t,-t,-t,-t,-t,-t,-t,t,-t,t,t,-t,-t,t,t,t,t,t,t,t,-t,-t,t,-t,-t,-t,-t,t,-t,-t,t,-t,t,-t,-t,t,t,-t,t,t,-t,-t,t,t,-t,t,t,t,-t,-t,-t,-t,-t,t,-t,t,t,-t,t,-t]),r=new Uint16Array([0,1,2,0,2,3,4,5,6,4,6,7,8,9,10,8,10,11,12,13,14,12,14,15,16,17,18,16,18,19,20,21,22,20,22,23]);return{vertices:n,indices:r,indexCount:r.length}}let Pe=`
+// Uniform buffer matching the WebGPU renderer's layout (1680 bytes)
+// viewProjectionMatrix is precomputed on CPU (projection * viewRotationOnly)
+struct Uniforms {
+    modelMatrix: mat4x4<f32>,
+    viewProjectionMatrix: mat4x4<f32>,
+    boneMatrices: array<mat4x4<f32>, 24>,
+    alphaTest: f32,
+}
+
+// Group 0: Uniforms (matches WebGPU renderer)
+@group(0) @binding(0) var<uniform> uniforms: Uniforms;
+
+// Group 1: Textures (matches WebGPU renderer)
+@group(1) @binding(0) var panoramaSampler: sampler;
+@group(1) @binding(1) var panoramaTexture: texture_2d<f32>;
+
+struct VertexInput {
+    @location(0) position: vec3<f32>,
+}
+
+struct VertexOutput {
+    @builtin(position) position: vec4<f32>,
+    @location(0) direction: vec3<f32>,
+}
+
+const PI: f32 = 3.14159265359;
+
+@vertex
+fn vs_main(input: VertexInput) -> VertexOutput {
+    var output: VertexOutput;
+
+    output.direction = input.position;
+
+    // viewProjectionMatrix = projection * viewRotation (translation already stripped on CPU)
+    let pos = uniforms.viewProjectionMatrix * vec4<f32>(input.position, 1.0);
+
+    // Set z = w so depth is always at far plane
+    output.position = vec4<f32>(pos.xy, pos.w, pos.w);
+
+    return output;
+}
+
+@fragment
+fn fs_main(input: VertexOutput) -> @location(0) vec4<f32> {
+    let dir = normalize(input.direction);
+
+    // Convert direction to equirectangular UV coordinates
+    let u = atan2(dir.z, dir.x) / (2.0 * PI) + 0.5;
+    let v = asin(clamp(dir.y, -1.0, 1.0)) / PI + 0.5;
+
+    // Flip V to match standard equirectangular orientation
+    return textureSample(panoramaTexture, panoramaSampler, vec2<f32>(u, 1.0 - v));
+}
+`;function Fe(){return[0,0,0]}function Ie(e,t,n){return[e,t,n]}function Le(e){return[e[0],e[1],e[2]]}function Re(e,t){return $e([0,0,0],e,t)}function ze(e,t){return et([0,0,0],e,t)}function Be(e,t){return tt([0,0,0],e,t)}function Ve(e,t){return[e[0]*t[0],e[1]*t[1],e[2]*t[2]]}function He(e,t){return e[0]*t[0]+e[1]*t[1]+e[2]*t[2]}function Ue(e,t){return it([0,0,0],e,t)}function We(e){return Math.sqrt(Ge(e))}function Ge(e){return e[0]*e[0]+e[1]*e[1]+e[2]*e[2]}function Ke(e){return rt([0,0,0],e)}function qe(e){return[-e[0],-e[1],-e[2]]}function Je(e,t,n){return nt([0,0,0],e,t,n)}function Ye(e,t){let n=e[0]-t[0],r=e[1]-t[1],i=e[2]-t[2];return Math.sqrt(n*n+r*r+i*i)}function Xe(e,t,n=1e-6){return Math.abs(e[0]-t[0])<n&&Math.abs(e[1]-t[1])<n&&Math.abs(e[2]-t[2])<n}function Ze(e,t){let n=e[0],r=e[1],i=e[2],a=t[3]*n+t[7]*r+t[11]*i+t[15];return[(t[0]*n+t[4]*r+t[8]*i+t[12])/a,(t[1]*n+t[5]*r+t[9]*i+t[13])/a,(t[2]*n+t[6]*r+t[10]*i+t[14])/a]}function Qe(e){return new Float32Array(e)}function $e(e,t,n){return e[0]=t[0]+n[0],e[1]=t[1]+n[1],e[2]=t[2]+n[2],e}function et(e,t,n){return e[0]=t[0]-n[0],e[1]=t[1]-n[1],e[2]=t[2]-n[2],e}function tt(e,t,n){return e[0]=t[0]*n,e[1]=t[1]*n,e[2]=t[2]*n,e}function nt(e,t,n,r){return e[0]=t[0]+(n[0]-t[0])*r,e[1]=t[1]+(n[1]-t[1])*r,e[2]=t[2]+(n[2]-t[2])*r,e}function rt(e,t){let n=We(t);return n===0?ot(e):tt(e,t,1/n)}function it(e,t,n){return e[0]=t[1]*n[2]-t[2]*n[1],e[1]=t[2]*n[0]-t[0]*n[2],e[2]=t[0]*n[1]-t[1]*n[0],e}function at(e,t){return e[0]=t[0],e[1]=t[1],e[2]=t[2],e}function ot(e){return e[0]=0,e[1]=0,e[2]=0,e}function st(){return new Float32Array([1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1])}function ct(){return new Float32Array(16)}function lt(e){return new Float32Array(e)}function ut(e,t){return e.set(t),e}function dt(e,t){return At(new Float32Array(16),e,t)}function ft(e){return Nt(new Float32Array(16),e)}function pt(e){let t=new Float32Array(16);return t[0]=e[0],t[5]=e[1],t[10]=e[2],t[15]=1,t}function mt(e){let t=Math.sin(e),n=Math.cos(e),r=new Float32Array(16);return r[0]=r[15]=1,r[5]=n,r[6]=t,r[9]=-t,r[10]=n,r}function ht(e){let t=Math.sin(e),n=Math.cos(e),r=new Float32Array(16);return r[0]=n,r[2]=-t,r[5]=r[15]=1,r[8]=t,r[10]=n,r}function gt(e){let t=Math.sin(e),n=Math.cos(e),r=new Float32Array(16);return r[0]=n,r[1]=t,r[4]=-t,r[5]=n,r[10]=r[15]=1,r}function _t(e,t){return jt(new Float32Array(16),e,t)}function vt(e,t){return Mt(new Float32Array(16),e,t)}function yt(e,t){return dt(e,mt(t))}function bt(e,t){return dt(e,ht(t))}function xt(e,t){return dt(e,gt(t))}function St(e,t,n,r){let i=1/Math.tan(e/2),a=1/(n-r),o=new Float32Array(16);return o[0]=i/t,o[5]=i,o[10]=(r+n)*a,o[11]=-1,o[14]=2*r*n*a,o}function Ct(e,t,n,r,i,a){let o=1/(e-t),s=1/(n-r),c=1/(i-a);return new Float32Array([-2*o,0,0,0,0,-2*s,0,0,0,0,2*c,0,(e+t)*o,(r+n)*s,(a+i)*c,1])}function wt(e,t,n){let r=e[0],i=e[1],a=e[2],o=n[0],s=n[1],c=n[2],l=t[0],u=t[1],d=t[2],f=r-l,p=i-u,m=a-d,h=f*f+p*p+m*m;h>0&&(h=1/Math.sqrt(h),f*=h,p*=h,m*=h);let g=s*m-c*p,_=c*f-o*m,v=o*p-s*f;h=g*g+_*_+v*v,h>0&&(h=1/Math.sqrt(h),g*=h,_*=h,v*=h);let y=p*v-m*_,b=m*g-f*v,x=f*_-p*g;return new Float32Array([g,y,f,0,_,b,p,0,v,x,m,0,-(g*r+_*i+v*a),-(y*r+b*i+x*a),-(f*r+p*i+m*a),1])}function Tt(e){let t=e[0],n=e[1],r=e[2],i=e[3],a=e[4],o=e[5],s=e[6],c=e[7],l=e[8],u=e[9],d=e[10],f=e[11],p=e[12],m=e[13],h=e[14],g=e[15],_=t*o-n*a,v=t*s-r*a,y=t*c-i*a,b=n*s-r*o,x=n*c-i*o,S=r*c-i*s,C=l*m-u*p,w=l*h-d*p,T=l*g-f*p,E=u*h-d*m,D=u*g-f*m,O=d*g-f*h,k=_*O-v*D+y*E+b*T-x*w+S*C;return k?(k=1/k,new Float32Array([(o*O-s*D+c*E)*k,(r*D-n*O-i*E)*k,(m*S-h*x+g*b)*k,(d*x-u*S-f*b)*k,(s*T-a*O-c*w)*k,(t*O-r*T+i*w)*k,(h*y-p*S-g*v)*k,(l*S-d*y+f*v)*k,(a*D-o*T+c*C)*k,(n*T-t*D-i*C)*k,(p*x-m*y+g*_)*k,(u*y-l*x-f*_)*k,(o*w-a*E-s*C)*k,(t*E-n*w+r*C)*k,(m*v-p*b-h*_)*k,(l*b-u*v+d*_)*k])):null}function Et(e){return new Float32Array([e[0],e[4],e[8],e[12],e[1],e[5],e[9],e[13],e[2],e[6],e[10],e[14],e[3],e[7],e[11],e[15]])}function Dt(e){return[e[12],e[13],e[14]]}function Ot(e){return[Math.sqrt(e[0]*e[0]+e[1]*e[1]+e[2]*e[2]),Math.sqrt(e[4]*e[4]+e[5]*e[5]+e[6]*e[6]),Math.sqrt(e[8]*e[8]+e[9]*e[9]+e[10]*e[10])]}function kt(e){return e.fill(0),e[0]=e[5]=e[10]=e[15]=1,e}function At(e,t,n){for(let r=0;r<16;r+=4){let i=n[r],a=n[r+1],o=n[r+2],s=n[r+3];e[r]=i*t[0]+a*t[4]+o*t[8]+s*t[12],e[r+1]=i*t[1]+a*t[5]+o*t[9]+s*t[13],e[r+2]=i*t[2]+a*t[6]+o*t[10]+s*t[14],e[r+3]=i*t[3]+a*t[7]+o*t[11]+s*t[15]}return e}function jt(e,t,n){let r=n[0],i=n[1],a=n[2];e!==t&&e.set(t.subarray(0,12));for(let n=0;n<4;n++)e[12+n]=t[n]*r+t[4+n]*i+t[8+n]*a+t[12+n];return e}function Mt(e,t,n){let r=n[0],i=n[1],a=n[2];for(let n=0;n<4;n++)e[n]=t[n]*r,e[4+n]=t[4+n]*i,e[8+n]=t[8+n]*a,e[12+n]=t[12+n];return e}function Nt(e,t){return e.fill(0),e[0]=e[5]=e[10]=e[15]=1,e[12]=t[0],e[13]=t[1],e[14]=t[2],e}function Pt(e,t,n,r,i){let a=1/Math.tan(t/2),o=1/(r-i);return e.fill(0),e[0]=a/n,e[5]=a,e[10]=(i+r)*o,e[11]=-1,e[14]=2*i*r*o,e}function Ft(e,t,n,r){let i=t[0],a=t[1],o=t[2],s=r[0],c=r[1],l=r[2],u=n[0],d=n[1],f=n[2],p=i-u,m=a-d,h=o-f,g=p*p+m*m+h*h;g>0&&(g=1/Math.sqrt(g),p*=g,m*=g,h*=g);let _=c*h-l*m,v=l*p-s*h,y=s*m-c*p;g=_*_+v*v+y*y,g>0&&(g=1/Math.sqrt(g),_*=g,v*=g,y*=g);let b=m*y-h*v,x=h*_-p*y,S=p*v-m*_;return e[0]=_,e[1]=b,e[2]=p,e[3]=0,e[4]=v,e[5]=x,e[6]=m,e[7]=0,e[8]=y,e[9]=S,e[10]=h,e[11]=0,e[12]=-(_*i+v*a+y*o),e[13]=-(b*i+x*a+S*o),e[14]=-(p*i+m*a+h*o),e[15]=1,e}function It(){return[0,0,0,1]}function Lt(e,t,n,r){return[e,t,n,r]}function Rt(e){return[e[0],e[1],e[2],e[3]]}function zt(e,t){let n=t/2,r=Math.sin(n);return[e[0]*r,e[1]*r,e[2]*r,Math.cos(n)]}function R(e,t,n){let r=e/2,i=t/2,a=n/2,o=Math.sin(r),s=Math.cos(r),c=Math.sin(i),l=Math.cos(i),u=Math.sin(a),d=Math.cos(a);return[o*l*d+s*c*u,s*c*d-o*l*u,s*l*u+o*c*d,s*l*d-o*c*u]}function Bt(e,t){return nn([0,0,0,0],e,t)}function Vt(e,t){let n=t/2;return Bt(e,[Math.sin(n),0,0,Math.cos(n)])}function Ht(e,t){let n=t/2;return Bt(e,[0,Math.sin(n),0,Math.cos(n)])}function Ut(e,t){let n=t/2;return Bt(e,[0,0,Math.sin(n),Math.cos(n)])}function Wt(e){return rn([0,0,0,0],e)}function Gt(e){let t=Zt(e,e);if(t===0)return[0,0,0,0];let n=1/t;return[-e[0]*n,-e[1]*n,-e[2]*n,e[3]*n]}function Kt(e,t,n){return an([0,0,0,0],e,t,n)}function qt(e){return on(new Float32Array(16),e)}function Jt(e,t){let n=e[0],r=e[1],i=e[2],a=e[3],o=t[0],s=t[1],c=t[2],l=a*o+r*c-i*s,u=a*s+i*o-n*c,d=a*c+n*s-r*o,f=-n*o-r*s-i*c;return[l*a+f*-n+u*-i-d*-r,u*a+f*-r+d*-n-l*-i,d*a+f*-i+l*-r-u*-n]}function Yt(e){let t=Math.acos(e[3])*2,n=Math.sin(t/2);return n>1e-6?{axis:[e[0]/n,e[1]/n,e[2]/n],angle:t}:{axis:[1,0,0],angle:t}}function Xt(e,t,n=1e-6){return Math.abs(e[0]-t[0])<n&&Math.abs(e[1]-t[1])<n&&Math.abs(e[2]-t[2])<n&&Math.abs(e[3]-t[3])<n}function Zt(e,t){return e[0]*t[0]+e[1]*t[1]+e[2]*t[2]+e[3]*t[3]}function Qt(e){return Math.sqrt(Zt(e,e))}function $t(e){return new Float32Array(e)}function en(e,t){return e[0]=t[0],e[1]=t[1],e[2]=t[2],e[3]=t[3],e}function tn(e){return e[0]=0,e[1]=0,e[2]=0,e[3]=1,e}function nn(e,t,n){let r=t[0],i=t[1],a=t[2],o=t[3],s=n[0],c=n[1],l=n[2],u=n[3];return e[0]=r*u+o*s+i*l-a*c,e[1]=i*u+o*c+a*s-r*l,e[2]=a*u+o*l+r*c-i*s,e[3]=o*u-r*s-i*c-a*l,e}function rn(e,t){let n=Qt(t);if(n===0)return tn(e);let r=1/n;return e[0]=t[0]*r,e[1]=t[1]*r,e[2]=t[2]*r,e[3]=t[3]*r,e}function an(e,t,n,r){let i=t[0],a=t[1],o=t[2],s=t[3],c=n[0],l=n[1],u=n[2],d=n[3],f=i*c+a*l+o*u+s*d;f<0&&(f=-f,c=-c,l=-l,u=-u,d=-d);let p,m;if(1-f>1e-6){let e=Math.acos(f),t=Math.sin(e);p=Math.sin((1-r)*e)/t,m=Math.sin(r*e)/t}else p=1-r,m=r;return e[0]=p*i+m*c,e[1]=p*a+m*l,e[2]=p*o+m*u,e[3]=p*s+m*d,e}function on(e,t){let n=t[0],r=t[1],i=t[2],a=t[3],o=n+n,s=r+r,c=i+i,l=n*o,u=r*o,d=r*s,f=i*o,p=i*s,m=i*c,h=a*o,g=a*s,_=a*c;return e.fill(0),e[0]=1-d-m,e[1]=u+_,e[2]=f-g,e[4]=u-_,e[5]=1-l-m,e[6]=p+h,e[8]=f+g,e[9]=p-h,e[10]=1-l-d,e[15]=1,e}function z(e){return e*(Math.PI/180)}function sn(e){return e*(180/Math.PI)}function cn(e,t,n){return Math.max(t,Math.min(n,e))}function ln(e,t,n){return e+(t-e)*n}function un(e,t,n){let r=cn((n-e)/(t-e),0,1);return r*r*(3-2*r)}function dn(e,t=1e-6){return Math.abs(e)<t}function fn(e,t,n=1e-6){return dn(e-t,n)}function pn(e,t,n,r,i){return(e-t)*(i-r)/(n-t)+r}function mn(e,t,n){let r=n-t;return((e-t)%r+r)%r+t}function hn(e){return e>0&&(e&e-1)==0}function gn(e){return e<=1?1:1<<32-Math.clz32(e-1)}function _n(e){return e>0?1:e<0?-1:0}function vn(e){return e-Math.floor(e)}function yn(e){let t=e;return()=>(t=(t*9301+49297)%233280,t/233280)}let bn=Math.PI,xn=Math.PI*2,Sn=Math.PI/2;function Cn(e){return e.backend===`webgpu`?{vertexShader:Pe,fragmentShader:Pe}:{vertexShader:`#version 300 es
+
+precision highp float;
+
+layout(location = 0) in vec3 a_position;
+
+uniform mat4 u_viewProjectionMatrix;
+
+out vec3 v_direction;
+
+void main() {
+    v_direction = a_position;
+
+    // viewProjectionMatrix = projection * viewRotation (translation already stripped on CPU)
+    vec4 pos = u_viewProjectionMatrix * vec4(a_position, 1.0);
+
+    // Set z = w so depth is always at far plane
+    gl_Position = pos.xyww;
+}
+`,fragmentShader:`#version 300 es
+
+precision highp float;
+
+in vec3 v_direction;
+
+uniform sampler2D u_panorama;
+
+out vec4 fragColor;
+
+const float PI = 3.14159265359;
+const float TWO_PI = 6.28318530718;
+
+void main() {
+    vec3 dir = normalize(v_direction);
+
+    // Convert direction to equirectangular UV coordinates
+    // atan(z, x) gives horizontal angle (-PI to PI)
+    // asin(y) gives vertical angle (-PI/2 to PI/2)
+    float u = atan(dir.z, dir.x) / TWO_PI + 0.5;
+    float v = asin(clamp(dir.y, -1.0, 1.0)) / PI + 0.5;
+
+    // Flip V to match standard equirectangular orientation
+    fragColor = texture(u_panorama, vec2(u, 1.0 - v));
+}
+`}}function wn(e){let t=Ne(2),n=e.createBuffer(u.Vertex,t.vertices),r=e.createBuffer(u.Index,t.indices),i={stride:12,attributes:[{name:`a_position`,location:0,format:p.Float32x3,offset:0}]},a=Cn(e),o=e.createPipeline({vertexShader:a.vertexShader,fragmentShader:a.fragmentShader,vertexLayout:i,cullMode:h.None,depthWrite:!1,depthCompare:_.LessEqual,blendMode:g.None}),s=null,c=t.indexCount,l=new Float32Array(16),m=new Float32Array(16);return{async setSource(t){s&&=(s.dispose(),null);let n=await De(t);s=await e.createTexture(n,{wrapU:f.Repeat,wrapV:f.ClampToEdge,minFilter:d.Linear,magFilter:d.Linear,generateMipmaps:!0})},render(t){s&&(l.set(t.viewMatrix),l[12]=0,l[13]=0,l[14]=0,At(m,t.projectionMatrix,l),e.draw({pipeline:o,vertexBuffers:[n],indexBuffer:r,indexCount:c,bindGroup:{uniforms:{u_viewProjectionMatrix:m},textures:{u_panorama:s}}}))},dispose(){n.dispose(),r.dispose(),o.dispose(),s&&=(s.dispose(),null)}}}let Tn={type:`background`,name:`panorama`,createRenderer:wn},En={fov:70,near:.1,far:1e3,position:[0,16,50],target:[0,16,0],up:[0,1,0]};function Dn(e,t={}){let n={...En,...t},r={fov:n.fov,near:n.near,far:n.far,aspect:e,position:[...n.position],target:[...n.target],up:[...n.up],projectionMatrix:st(),viewMatrix:st(),viewProjectionMatrix:st()};return On(r),r}function On(e){let t=e.fov*Math.PI/180;Pt(e.projectionMatrix,t,e.aspect,e.near,e.far),Ft(e.viewMatrix,e.position,e.target,e.up),At(e.viewProjectionMatrix,e.projectionMatrix,e.viewMatrix)}function kn(e,t){e.aspect=t,On(e)}function An(e,t){e.position=[...t],On(e)}let jn={enableRotate:!0,enableZoom:!0,enablePan:!1,rotateSpeed:1,zoomSpeed:1,minDistance:20,maxDistance:200,minPolarAngle:z(10),maxPolarAngle:z(170),autoRotate:!1,autoRotateSpeed:30};function Mn(e,t,n={}){let r={...jn,...n},i=e.position[0]-e.target[0],a=e.position[1]-e.target[1],o=e.position[2]-e.target[2],s=Math.sqrt(i*i+a*a+o*o),c=Math.atan2(i,o),l=Math.acos(cn(a/s,-1,1)),u={enabled:!0,enableRotate:r.enableRotate,enableZoom:r.enableZoom,enablePan:r.enablePan,rotateSpeed:r.rotateSpeed,zoomSpeed:r.zoomSpeed,minDistance:r.minDistance,maxDistance:r.maxDistance,minPolarAngle:r.minPolarAngle,maxPolarAngle:r.maxPolarAngle,autoRotate:r.autoRotate,autoRotateSpeed:r.autoRotateSpeed,theta:c,phi:l,distance:s,target:[...e.target],isDragging:!1,lastX:0,lastY:0,onDistanceChange:null,onRotationChange:null,camera:e,element:t,dispose:()=>{}},d=new Map,f=!1,p=0;function m(e){u.distance=cn(e,u.minDistance,u.maxDistance),Nn(u),u.onDistanceChange?.(u.distance)}let h=e=>{if(u.enabled){if(d.set(e.pointerId,{x:e.clientX,y:e.clientY}),t.setPointerCapture(e.pointerId),d.size===1&&u.enableRotate)u.isDragging=!0,u.lastX=e.clientX,u.lastY=e.clientY;else if(d.size===2&&u.enableZoom){u.isDragging=!1,f=!0;let e=Array.from(d.values());p=Math.hypot(e[1].x-e[0].x,e[1].y-e[0].y)}}},g=e=>{if(!(!u.enabled||!d.has(e.pointerId))){if(d.set(e.pointerId,{x:e.clientX,y:e.clientY}),f&&d.size===2){let e=Array.from(d.values()),t=Math.hypot(e[1].x-e[0].x,e[1].y-e[0].y);if(p>0){let e=p/t;m(u.distance*e)}p=t}else if(u.isDragging&&d.size===1){let t=e.clientX-u.lastX,n=e.clientY-u.lastY;u.lastX=e.clientX,u.lastY=e.clientY;let r=.005*u.rotateSpeed;u.theta-=t*r,u.phi-=n*r,u.phi=cn(u.phi,u.minPolarAngle,u.maxPolarAngle),Nn(u),u.onRotationChange?.(u.theta,u.phi)}}},_=e=>{d.delete(e.pointerId),t.releasePointerCapture(e.pointerId),d.size<2&&(f=!1,p=0),d.size===0&&(u.isDragging=!1)},v=e=>{if(!u.enabled||!u.enableZoom)return;e.preventDefault();let t=e.deltaY>0?1.1:.9;m(u.distance*t**u.zoomSpeed)},y=t.style.touchAction;return t.style.touchAction=`none`,t.addEventListener(`pointerdown`,h),t.addEventListener(`pointermove`,g),t.addEventListener(`pointerup`,_),t.addEventListener(`pointercancel`,_),t.addEventListener(`wheel`,v,{passive:!1}),u.dispose=()=>{t.style.touchAction=y,t.removeEventListener(`pointerdown`,h),t.removeEventListener(`pointermove`,g),t.removeEventListener(`pointerup`,_),t.removeEventListener(`pointercancel`,_),t.removeEventListener(`wheel`,v)},u}function Nn(e){let{theta:t,phi:n,distance:r,target:i,camera:a}=e,o=Math.sin(n),s=Math.cos(n),c=Math.sin(t),l=Math.cos(t);An(a,Ie(i[0]+r*o*c,i[1]+r*s,i[2]+r*o*l))}function Pn(e,t){e.enabled&&e.autoRotate&&!e.isDragging&&(e.theta+=z(e.autoRotateSpeed)*t,Nn(e),e.onRotationChange?.(e.theta,e.phi))}function Fn(e,t,n){e.theta=t,e.phi=cn(n,e.minPolarAngle,e.maxPolarAngle),Nn(e)}function In(e){return{theta:e.theta,phi:e.phi}}function Ln(e,t){e.distance=cn(t,e.minDistance,e.maxDistance),Nn(e)}function Rn(e){return e.distance}function zn(e){e.theta=0,e.phi=Math.PI/2,e.distance=50,Nn(e)}let B=function(e){return e[e.Root=0]=`Root`,e[e.Head=1]=`Head`,e[e.Body=2]=`Body`,e[e.LeftArm=3]=`LeftArm`,e[e.RightArm=4]=`RightArm`,e[e.LeftLeg=5]=`LeftLeg`,e[e.RightLeg=6]=`RightLeg`,e[e.HeadOverlay=7]=`HeadOverlay`,e[e.BodyOverlay=8]=`BodyOverlay`,e[e.LeftArmOverlay=9]=`LeftArmOverlay`,e[e.RightArmOverlay=10]=`RightArmOverlay`,e[e.LeftLegOverlay=11]=`LeftLegOverlay`,e[e.RightLegOverlay=12]=`RightLegOverlay`,e[e.Cape=13]=`Cape`,e[e.LeftWing=14]=`LeftWing`,e[e.RightWing=15]=`RightWing`,e}({}),Bn=[`head`,`body`,`leftArm`,`rightArm`,`leftLeg`,`rightLeg`];function Vn(){return{head:{inner:!0,outer:!0},body:{inner:!0,outer:!0},leftArm:{inner:!0,outer:!0},rightArm:{inner:!0,outer:!0},leftLeg:{inner:!0,outer:!0},rightLeg:{inner:!0,outer:!0}}}let V=.001;function H(e,t,n,r,i,a){return{index:e,name:t,parentIndex:n,position:r,pivot:i,rotation:It(),positionOffset:[0,0,0],size:a}}function Hn(e,t,n,r,i=.5){return H(e,t,n,[0,0,0],[0,0,0],[r[0]+i*2,r[1]+i*2,r[2]+i*2])}function Un(e=`classic`){let t=e===`slim`?3:4,n=new Map;n.set(B.Root,H(B.Root,`root`,null,[0,0,0],[0,0,0],[0,0,0])),n.set(B.Body,H(B.Body,`body`,B.Root,[0,24,0],[0,0,0],[8,12,4])),n.set(B.Head,H(B.Head,`head`,B.Body,[0,0,0],[0,0,0],[8,8,8])),n.set(B.RightArm,H(B.RightArm,`rightArm`,B.Body,[-(4+t/2),0,0],[0,0,0],[t,12,4])),n.set(B.LeftArm,H(B.LeftArm,`leftArm`,B.Body,[4+t/2,0,0],[0,0,0],[t,12,4])),n.set(B.RightLeg,H(B.RightLeg,`rightLeg`,B.Body,[-2,-12,0],[0,0,0],[4,12,4])),n.set(B.LeftLeg,H(B.LeftLeg,`leftLeg`,B.Body,[2,-12,0],[0,0,0],[4,12,4])),n.set(B.HeadOverlay,Hn(B.HeadOverlay,`headOverlay`,B.Head,[8,8,8])),n.set(B.BodyOverlay,Hn(B.BodyOverlay,`bodyOverlay`,B.Body,[8,12,4])),n.set(B.RightArmOverlay,Hn(B.RightArmOverlay,`rightArmOverlay`,B.RightArm,[t,12,4])),n.set(B.LeftArmOverlay,Hn(B.LeftArmOverlay,`leftArmOverlay`,B.LeftArm,[t,12,4])),n.set(B.RightLegOverlay,Hn(B.RightLegOverlay,`rightLegOverlay`,B.RightLeg,[4,12,4])),n.set(B.LeftLegOverlay,Hn(B.LeftLegOverlay,`leftLegOverlay`,B.LeftLeg,[4,12,4])),n.set(B.Cape,H(B.Cape,`cape`,B.Body,[0,0,-2],[0,0,0],[10,16,1])),n.set(B.LeftWing,H(B.LeftWing,`leftWing`,B.Body,[5,-1,-2],[0,0,0],[10,20,2])),n.set(B.RightWing,H(B.RightWing,`rightWing`,B.Body,[-5,-1,-2],[0,0,0],[10,20,2]));let r=n.get(B.LeftWing),i=n.get(B.RightWing);return r.rotation=R(z(15),z(.5),z(15)),i.rotation=R(z(15),z(-.5),z(-15)),{variant:e,bones:n}}function Wn(e,t,n){let r=e.bones.get(t);r&&(r.rotation=n)}function Gn(e,t,n){let r=e.bones.get(t);r&&(r.positionOffset=n)}function Kn(e){for(let t of e.bones.values())t.rotation=It(),t.positionOffset=[0,0,0];let t=e.bones.get(B.LeftWing),n=e.bones.get(B.RightWing);t&&(t.rotation=R(z(15),z(.5),z(15))),n&&(n.rotation=R(z(15),z(-.5),z(-15)))}function qn(e,t){return{isRunning:!1,lastTime:0,frameId:null,onUpdate:e,onRender:t}}function Jn(e){if(e.isRunning)return;e.isRunning=!0,e.lastTime=performance.now();let t=n=>{if(!e.isRunning)return;let r=(n-e.lastTime)/1e3;e.lastTime=n;let i=Math.min(r,.1);e.onUpdate(i),e.onRender(),e.frameId=requestAnimationFrame(t)};e.frameId=requestAnimationFrame(t)}function Yn(e){e.isRunning=!1,e.frameId!==null&&(cancelAnimationFrame(e.frameId),e.frameId=null)}let Xn=e=>e,Zn=e=>e*e,Qn=e=>e*(2-e),$n=e=>e<.5?2*e*e:-1+(4-2*e)*e,er=e=>e*e*e,tr=e=>{let t=e-1;return t*t*t+1},nr=e=>e<.5?4*e*e*e:(e-1)*(2*e-2)*(2*e-2)+1,rr=e=>1-Math.cos(e*Math.PI/2),ir=e=>Math.sin(e*Math.PI/2),U=e=>-(Math.cos(Math.PI*e)-1)/2,ar=e=>Math.sin(e*Math.PI*2),or=e=>Math.sin(e*Math.PI),sr=e=>{if(e<1/2.75)return 7.5625*e*e;if(e<2/2.75){let t=e-1.5/2.75;return 7.5625*t*t+.75}else if(e<2.5/2.75){let t=e-2.25/2.75;return 7.5625*t*t+.9375}else{let t=e-2.625/2.75;return 7.5625*t*t+.984375}},cr=e=>{if(e===0||e===1)return e;let t=.3;return t/4,2**(-10*e)*Math.sin((e-.075)*(2*Math.PI)/t)+1},W=function(e){return e[e.Stopped=0]=`Stopped`,e[e.Playing=1]=`Playing`,e[e.Paused=2]=`Paused`,e}({}),lr=new Map;function ur(e){lr.set(e.name,e)}function dr(e){return lr.get(e)}function fr(){return Array.from(lr.keys())}function pr(e,t,n=!1,r=U){let i=t.amplitude,a=t.zRotation??0,o=n?-i:i;return{boneIndex:e,keyframes:[{time:0,rotation:R(z(o),0,z(a))},{time:.5,rotation:R(z(-o),0,z(a)),easing:r},{time:1,rotation:R(z(o),0,z(a)),easing:r}]}}function mr(e){return[pr(B.RightArm,{amplitude:e},!1),pr(B.LeftArm,{amplitude:e},!0)]}function hr(e){return[pr(B.RightLeg,{amplitude:e},!0),pr(B.LeftLeg,{amplitude:e},!1)]}function gr(e,t,n=U){let{x:r,y:i,z:a}=e;if(t){let{dx:e,dy:o,dz:s}=t;return[{boneIndex:B.LeftWing,keyframes:[{time:0,rotation:R(z(r),z(i),z(a))},{time:.5,rotation:R(z(r+e),z(i+o),z(a+s)),easing:n},{time:1,rotation:R(z(r),z(i),z(a)),easing:n}]},{boneIndex:B.RightWing,keyframes:[{time:0,rotation:R(z(r),z(-i),z(-a))},{time:.5,rotation:R(z(r+e),z(-i-o),z(-a-s)),easing:n},{time:1,rotation:R(z(r),z(-i),z(-a)),easing:n}]}]}let o=R(z(r),z(i),z(a)),s=R(z(r),z(-i),z(-a));return[{boneIndex:B.LeftWing,keyframes:[{time:0,rotation:o},{time:1,rotation:o}]},{boneIndex:B.RightWing,keyframes:[{time:0,rotation:s},{time:1,rotation:s}]}]}function _r(e,t){return gr({x:e,y:0,z:t})}function vr(e,t=2,n=U){let r=[{time:0,rotation:R(z(-e),0,0)}],i=1/(t*2);for(let a=1;a<=t*2;a++){let t=a%2==1;r.push({time:a*i,rotation:R(z(t?e:-e),0,0),easing:n})}return{boneIndex:B.Head,keyframes:r}}function G(e,t=0,n=0){return R(z(e),z(t),z(n))}function yr(){let[e,t]=gr({x:15,y:.5,z:15},{dx:2,dy:0,dz:1});return{name:`idle`,duration:3,loop:!0,tracks:[{boneIndex:B.Head,keyframes:[{time:0,rotation:G(0)},{time:.5,rotation:G(2),easing:U},{time:1,rotation:G(0)}]},{boneIndex:B.RightArm,keyframes:[{time:0,rotation:G(2)},{time:.5,rotation:G(-2),easing:U},{time:1,rotation:G(2),easing:U}]},{boneIndex:B.LeftArm,keyframes:[{time:0,rotation:G(-2)},{time:.5,rotation:G(2),easing:U},{time:1,rotation:G(-2),easing:U}]},{boneIndex:B.Cape,keyframes:[{time:0,rotation:G(10)},{time:.5,rotation:R(z(12),z(2),0),easing:U},{time:1,rotation:G(10),easing:U}]},e,t]}}ur(yr());function br(){let[e,t]=mr(24),[n,r]=hr(40),[i,a]=gr({x:20,y:.5,z:15},{dx:3,dy:1,dz:2});return{name:`walk`,duration:1.2,loop:!0,tracks:[vr(2,2),e,t,n,r,{boneIndex:B.Cape,keyframes:[{time:0,rotation:R(z(22),z(2),0)},{time:.25,rotation:R(z(18),0,0),easing:U},{time:.5,rotation:R(z(22),z(-2),0),easing:U},{time:.75,rotation:R(z(18),0,0),easing:U},{time:1,rotation:R(z(22),z(2),0),easing:U}]},i,a]}}ur(br());function xr(){let[e,t]=mr(70),[n,r]=hr(60),[i,a]=gr({x:25,y:.5,z:15},{dx:5,dy:3,dz:3});return{name:`run`,duration:.5,loop:!0,tracks:[{boneIndex:B.Root,keyframes:[{time:0,position:[0,0,0]},{time:.25,position:[0,1,0],easing:U},{time:.5,position:[0,0,0],easing:U},{time:.75,position:[0,1,0],easing:U},{time:1,position:[0,0,0],easing:U}]},vr(3,2),e,t,n,r,{boneIndex:B.Cape,keyframes:[{time:0,rotation:R(z(55),z(2),0)},{time:.25,rotation:R(z(50),0,0),easing:U},{time:.5,rotation:R(z(55),z(-2),0),easing:U},{time:.75,rotation:R(z(50),0,0),easing:U},{time:1,rotation:R(z(55),z(2),0),easing:U}]},i,a]}}ur(xr());function Sr(){let[e,t]=_r(20,80);return{name:`fly`,duration:1.5,loop:!0,tracks:[{boneIndex:B.Root,keyframes:[{time:0,position:[0,-10,6]}]},{boneIndex:B.Body,keyframes:[{time:0,rotation:G(80)},{time:.5,rotation:G(83),easing:U},{time:1,rotation:G(80),easing:U}]},{boneIndex:B.Head,keyframes:[{time:0,rotation:G(-70)},{time:.5,rotation:G(-75),easing:U},{time:1,rotation:G(-70),easing:U}]},{boneIndex:B.RightArm,keyframes:[{time:0,rotation:G(10,0,-15)},{time:.5,rotation:G(15,0,-20),easing:U},{time:1,rotation:G(10,0,-15),easing:U}]},{boneIndex:B.LeftArm,keyframes:[{time:0,rotation:G(10,0,15)},{time:.5,rotation:G(15,0,20),easing:U},{time:1,rotation:G(10,0,15),easing:U}]},{boneIndex:B.RightLeg,keyframes:[{time:0,rotation:G(5,0,-3)},{time:.5,rotation:G(10,0,-5),easing:U},{time:1,rotation:G(5,0,-3),easing:U}]},{boneIndex:B.LeftLeg,keyframes:[{time:0,rotation:G(5,0,3)},{time:.5,rotation:G(10,0,5),easing:U},{time:1,rotation:G(5,0,3),easing:U}]},{boneIndex:B.Cape,keyframes:[{time:0,rotation:G(10)},{time:.25,rotation:R(z(15),z(2),0),easing:U},{time:.5,rotation:G(5),easing:U},{time:.75,rotation:R(z(15),z(-2),0),easing:U},{time:1,rotation:G(10),easing:U}]},e,t]}}ur(Sr());let Cr=new WeakMap;function wr(e,t){let n=0,r=e.length-1;if(t<=e[0].time)return 0;if(t>=e[r].time)return r;for(;n<r;){let i=n+r+1>>1;e[i].time<=t?n=i:r=i-1}return n}function Tr(e,t,n){if(e.length===0)return{};if(e.length===1){let t=e[0],r={};return t.rotation&&(r.rotation=n===1?t.rotation:Kt(It(),t.rotation,n)),t.position&&(r.position=n===1?t.position:Je(Fe(),t.position,n)),r}let r=wr(e,t),i=e[r];if(r>=e.length-1){let e={};return i.rotation&&(e.rotation=n===1?i.rotation:Kt(It(),i.rotation,n)),i.position&&(e.position=n===1?i.position:Je(Fe(),i.position,n)),e}let a=e[r+1],o=a.time-i.time,s=o>0?(t-i.time)/o:0,c=(a.easing??Xn)(s),l={};if(i.rotation&&a.rotation){let e=Kt(i.rotation,a.rotation,c);n!==1&&(e=Kt(It(),e,n)),l.rotation=e}if(i.position&&a.position){let e=Je(i.position,a.position,c);n!==1&&(e=Je(Fe(),e,n)),l.position=e}return l}function Er(e){let t={skeleton:e,current:null},n={get isPlaying(){return t.current?.playState===W.Playing},get isPaused(){return t.current?.playState===W.Paused},get isFinished(){return t.current?.playState===W.Stopped},get currentAnimation(){return t.current?.animation.name??null},get progress(){return t.current?t.current.time%t.current.animation.duration/t.current.animation.duration:0},skeleton:e,play(n,r){let i=dr(n);if(!i){console.warn(`Animation "${n}" not found`);return}Kn(e),t.current={animation:i,config:{speed:r?.speed??1,amplitude:r?.amplitude??1},time:0,playState:W.Playing}},pause(){t.current&&t.current.playState===W.Playing&&(t.current.playState=W.Paused)},resume(){t.current&&t.current.playState===W.Paused&&(t.current.playState=W.Playing)},stop(){t.current=null,Kn(e)},setSpeed(e){t.current&&(t.current.config.speed=e)},setAmplitude(e){t.current&&(t.current.config.amplitude=e)}};return Cr.set(n,t),n}function Dr(e,t){let n=Cr.get(e);if(!n||!n.current||n.current.playState!==W.Playing)return;let{animation:r,config:i}=n.current;n.current.time+=t*(i.speed??1),r.loop?n.current.time%=r.duration:n.current.time>=r.duration&&(n.current.time=r.duration,n.current.playState=W.Stopped);let a=n.current.time/r.duration,o=i.amplitude??1;for(let t of r.tracks){let n=Tr(t.keyframes,a,o);n.rotation&&Wn(e.skeleton,t.boneIndex,n.rotation),n.position&&Gn(e.skeleton,t.boneIndex,n.position)}}let Or=[-1,-1,1,1,-1,1,1,1,1,-1,1,1,1,-1,-1,-1,-1,-1,-1,1,-1,1,1,-1,-1,-1,-1,-1,-1,1,-1,1,1,-1,1,-1,1,-1,1,1,-1,-1,1,1,-1,1,1,1,-1,1,1,1,1,1,1,1,-1,-1,1,-1,-1,-1,-1,1,-1,-1,1,-1,1,-1,-1,1],kr=[0,0,1,0,0,-1,-1,0,0,1,0,0,0,1,0,0,-1,0],Ar=[`front`,`back`,`right`,`left`,`top`,`bottom`],jr=[`front`,`back`,`left`,`right`,`top`,`bottom`];function Mr(e,t,n,r,i){let{inflate:a=0,mirrorX:o=!1,textureWidth:s=64,textureHeight:c=64,capeUVMode:l=!1}=i,u=e[0]/2+a,d=e[1]/2+a,f=e[2]/2+a,p=r[0],m=r[1],h=r[2],g=o?-1:1,_=new Float32Array(240),v=new Uint16Array(36),y=0,b=0,x=l?jr:Ar;for(let e=0;e<6;e++){let r=t[x[e]],i=r.u1/s,a=r.u2/s,S=r.v1/c,C=r.v2/c;i<a?(i+=V,a-=V):(i-=V,a+=V),S<C?(S+=V,C-=V):(S-=V,C+=V);let w=l&&e<4,T=w?a:i,E=w?i:a,D=e===5?S:C,O=e===5?C:S,k=e*3,ee=kr[k],A=kr[k+1],j=kr[k+2],M=e*4;for(let t=0;t<4;t++){let r=e*12+t*3;_[y++]=(p+Or[r]*u)*g,_[y++]=m+Or[r+1]*d,_[y++]=h+Or[r+2]*f,_[y++]=t===0||t===3?T:E,_[y++]=t<2?D:O,_[y++]=ee*g,_[y++]=A,_[y++]=j,_[y++]=n,_[y++]=0}o?(v[b++]=M+2,v[b++]=M+1,v[b++]=M,v[b++]=M,v[b++]=M+3,v[b++]=M+2):(v[b++]=M,v[b++]=M+1,v[b++]=M+2,v[b++]=M+2,v[b++]=M+3,v[b++]=M)}return{vertices:_,indices:v,vertexCount:24,indexCount:36}}function K(e,t,n,r=[0,0,0],i=0){return Mr(e,t,n,r,{inflate:i,textureWidth:64,textureHeight:64,capeUVMode:!1})}function Nr(e,t,n,r=[0,0,0],i=!1){return Mr(e,t,n,r,{mirrorX:i,textureWidth:64,textureHeight:32,capeUVMode:!0})}function Pr(e){let t=0,n=0;for(let r of e)t+=r.vertexCount,n+=r.indexCount;let r=new Float32Array(t*10),i=new Uint16Array(n),a=0,o=0,s=0;for(let t of e){r.set(t.vertices,a),a+=t.vertices.length;for(let e=0;e<t.indexCount;e++)i[o++]=t.indices[e]+s;s+=t.vertexCount}return{vertices:r,indices:i,vertexCount:t,indexCount:n}}function Fr(){return L(0,0,10,16,1,`cape`)}function Ir(){return L(22,0,10,20,2,`elytra`)}let Lr={stride:40,attributes:[{name:`a_position`,location:0,format:p.Float32x3,offset:0},{name:`a_uv`,location:1,format:p.Float32x2,offset:12},{name:`a_normal`,location:2,format:p.Float32x3,offset:20},{name:`a_boneIndex`,location:3,format:p.Float32,offset:32}]};function Rr(e){let t=be(e),n=e===`slim`?3:4;return{head:{inner:K([8,8,8],t.head.inner,B.Head,[0,4,0]),outer:K([8,8,8],t.head.outer,B.HeadOverlay,[0,4,0],.5)},body:{inner:K([8,12,4],t.body.inner,B.Body,[0,-6,0]),outer:K([8,12,4],t.body.outer,B.BodyOverlay,[0,-6,0],.25)},rightArm:{inner:K([n,12,4],t.rightArm.inner,B.RightArm,[0,-6,0]),outer:K([n,12,4],t.rightArm.outer,B.RightArmOverlay,[0,-6,0],.25)},leftArm:{inner:K([n,12,4],t.leftArm.inner,B.LeftArm,[0,-6,0]),outer:K([n,12,4],t.leftArm.outer,B.LeftArmOverlay,[0,-6,0],.25)},rightLeg:{inner:K([4,12,4],t.rightLeg.inner,B.RightLeg,[0,-6,0]),outer:K([4,12,4],t.rightLeg.outer,B.RightLegOverlay,[0,-6,0],.25)},leftLeg:{inner:K([4,12,4],t.leftLeg.inner,B.LeftLeg,[0,-6,0]),outer:K([4,12,4],t.leftLeg.outer,B.LeftLegOverlay,[0,-6,0],.25)}}}function zr(e,t){return{innerVertexBuffer:e.createBuffer(u.Vertex,t.inner.vertices),innerIndexBuffer:e.createBuffer(u.Index,t.inner.indices),outerVertexBuffer:e.createBuffer(u.Vertex,t.outer.vertices),outerIndexBuffer:e.createBuffer(u.Index,t.outer.indices),innerIndexCount:t.inner.indexCount,outerIndexCount:t.outer.indexCount}}function Br(e,t){let n={};for(let r of Bn)n[r]=zr(e,t[r]);return n}function Vr(e){for(let t of Bn){let n=e[t];n.innerVertexBuffer.dispose(),n.innerIndexBuffer.dispose(),n.outerVertexBuffer.dispose(),n.outerIndexBuffer.dispose()}}function Hr(){return Nr([10,16,1],Fr(),B.Cape,[0,-8,-.5])}function Ur(){let e=Ir();return Pr([Nr([12,22,4],e,B.LeftWing,[-5,-10,-1],!1),Nr([12,22,4],e,B.RightWing,[-5,-10,-1],!0)])}function Wr(e){let t=c(e.backend),n=t.getComposedShaders?.()??t.shaders,r=n.vertex,i=n.fragment;return{skinPipeline:e.createPipeline({vertexShader:r,fragmentShader:i,vertexLayout:Lr,cullMode:h.Back,blendMode:g.Alpha,depthWrite:!0,depthCompare:_.Less}),overlayPipeline:e.createPipeline({vertexShader:r,fragmentShader:i,vertexLayout:Lr,cullMode:h.None,blendMode:g.Alpha,depthWrite:!0,depthCompare:_.Less}),capePipeline:e.createPipeline({vertexShader:r,fragmentShader:i,vertexLayout:Lr,cullMode:h.None,blendMode:g.Alpha,depthWrite:!0,depthCompare:_.Less})}}let Gr=[B.Root,B.Body,B.Head,B.RightArm,B.LeftArm,B.RightLeg,B.LeftLeg,B.HeadOverlay,B.BodyOverlay,B.RightArmOverlay,B.LeftArmOverlay,B.RightLegOverlay,B.LeftLegOverlay,B.Cape,B.LeftWing,B.RightWing],q=new Float32Array(16),Kr=new Float32Array(16),qr=new Float32Array(16),Jr=new Float32Array(16);kt(Jr);let Yr=Gr.map(()=>new Float32Array(16)),Xr=new Map;for(let e=0;e<Gr.length;e++)Xr.set(Gr[e],e);let J=[0,0,0];function Zr(e,t){t.fill(0);for(let e=0;e<24;e++){let n=e*16;t[n]=t[n+5]=t[n+10]=t[n+15]=1}for(let n=0;n<Gr.length;n++){let r=Gr[n],i=e.bones.get(r);if(!i)continue;let a=Jr;if(i.parentIndex!==null){let e=Xr.get(i.parentIndex);e!==void 0&&(a=Yr[e])}let o=i.position,s=i.positionOffset,c=i.pivot;kt(q),J[0]=o[0]+s[0],J[1]=o[1]+s[1],J[2]=o[2]+s[2],jt(q,q,J),jt(q,q,c),on(Kr,i.rotation),At(qr,q,Kr),J[0]=-c[0],J[1]=-c[1],J[2]=-c[2],jt(q,qr,J);let l=Yr[n];At(l,a,q),t.set(l,r*16)}}function Qr(){let e=st(),t=new Float32Array(16),n=new Float32Array(3),r={u_modelMatrix:e,u_viewProjectionMatrix:t,"u_boneMatrices[0]":null,u_alphaTest:.01,u_ambientIntensity:.6,u_diffuseIntensity:.4,u_lightDirection:n},i={u_skinTexture:null},a={u_skinTexture:null};return{modelMatrix:e,viewProjectionMatrix:t,lightDirection:n,uniforms:r,skinTextures:i,capeTextures:a,skinBindGroup:{uniforms:r,textures:i},capeBindGroup:{uniforms:r,textures:a}}}function $r(e,t,n,r,i,a,o,s){At(e.viewProjectionMatrix,n,t);let c=a[0]-o[0],l=a[1]-o[1],u=a[2]-o[2],d=Math.sqrt(c*c+l*l+u*u)||1;e.lightDirection[0]=c/d,e.lightDirection[1]=l/d,e.lightDirection[2]=u/d,e.uniforms[`u_boneMatrices[0]`]=r,e.skinTextures.u_skinTexture=i,s&&(e.capeTextures.u_skinTexture=s)}let ei=`PanoramaPlugin is not registered. Import and use() it to enable panorama backgrounds:
+  import { PanoramaPlugin } from 'minecraft-skin-renderer/panorama'
+  use(PanoramaPlugin)`;async function ti(e){let t=e.canvas,n=t.clientWidth||t.width,r=t.clientHeight||t.height,a=e.slim?`slim`:`classic`,o=e.preferredBackend??`auto`,s=l();if(s.length===0)throw Error(`No renderer registered. Please register a renderer using use():
+  import { use } from 'minecraft-skin-renderer'
+  import { WebGLRendererPlugin } from 'minecraft-skin-renderer/webgl'
+  use(WebGLRendererPlugin)`);let f=o===`auto`?c(`webgpu`)&&v()?`webgpu`:c(`webgl`)?`webgl`:s[0]:o,p=c(f);if(!p)throw Error(`Renderer "${f}" is not registered. Available: [${s.join(`, `)}]\nPlease register it using use():\n  import { ${f===`webgpu`?`WebGPURendererPlugin`:`WebGLRendererPlugin`} } from 'minecraft-skin-renderer/${f}'\n  use(${f===`webgpu`?`WebGPURendererPlugin`:`WebGLRendererPlugin`})`);let m={canvas:t,antialias:e.antialias??!0,pixelRatio:e.pixelRatio,preserveDrawingBuffer:!0},h;try{h=await p.createRenderer(m)}catch(e){let t=s.find(e=>e!==f),n=t&&c(t);if(!n)throw e;console.warn(`${f} initialization failed, falling back to ${t}:`,e);try{h=await n.createRenderer(m)}catch(n){throw Error(`All renderers failed to initialize.\n  ${f}: ${e instanceof Error?e.message:e}\n  ${t}: ${n instanceof Error?n.message:n}`)}}h.resize(n,r);let g=Dn(n/r,{fov:e.fov??70,position:[0,16,50],target:[0,16,0]}),_=Mn(g,t,{enableRotate:e.enableRotate??!0,enableZoom:e.enableZoom??!0,autoRotate:e.autoRotate??!1,autoRotateSpeed:e.autoRotateSpeed??30,minDistance:20,maxDistance:150});e.zoom!==void 0&&Ln(_,e.zoom);let y=Un(a),b=Rr(a),{skinPipeline:x,overlayPipeline:S,capePipeline:C}=Wr(h),w=Br(h,b),T=Hr(),E=h.createBuffer(u.Vertex,T.vertices),D=h.createBuffer(u.Index,T.indices),O=Ur(),k=h.createBuffer(u.Vertex,O.vertices),ee=h.createBuffer(u.Index,O.indices),A;try{A=e.skin?await ke(e.skin):await Me()}catch(e){console.warn(`Failed to load skin texture, using placeholder:`,e),A=await Me()}let j={magFilter:d.Linear,minFilter:d.Linear},M=await h.createTexture(A,j),N=Er(y),P=null;if(e.cape)try{let t=await Ae(e.cape);P=await h.createTexture(t,j)}catch(e){console.warn(`Failed to load cape texture:`,e)}let te=e.backEquipment??`none`;te===`none`&&P&&(te=`cape`);let F=Qr(),I={renderer:h,camera:g,controls:_,renderLoop:null,animationController:N,skeleton:y,variant:a,skinPipeline:x,overlayPipeline:S,capePipeline:C,partBuffers:w,capeVertexBuffer:E,capeIndexBuffer:D,capeGeometry:T,elytraVertexBuffer:k,elytraIndexBuffer:ee,elytraGeometry:O,skinTexture:M,capeTexture:P,partGeometries:b,partsVisibility:Vn(),backEquipment:te,boneMatricesCache:new Float32Array(384),boneMatricesDirty:!0,renderBindGroups:F,ambientLight:e.ambientLight??.6,directLight:e.directLight??.4,backgroundRenderer:null,disposed:!1};if(e.panorama){let t=i(`panorama`);t?(I.backgroundRenderer=t.createRenderer(h),I.backgroundRenderer.setSource(e.panorama).catch(e=>{console.warn(`Failed to load panorama:`,e)})):console.warn(ei)}let ne=()=>{if(I.disposed)return;let{renderer:e,camera:t,skinPipeline:n,overlayPipeline:r,capePipeline:i,partBuffers:a,capeVertexBuffer:o,capeIndexBuffer:s,elytraVertexBuffer:c,elytraIndexBuffer:l,skinTexture:u,capeTexture:d,partsVisibility:f,backEquipment:p}=I;if(e.beginFrame(),e.clear(0,0,0,0),I.backgroundRenderer&&I.backgroundRenderer.render(t),u){I.boneMatricesDirty&&=(Zr(I.skeleton,I.boneMatricesCache),!1);let{renderBindGroups:m}=I;m.uniforms.u_ambientIntensity=I.ambientLight,m.uniforms.u_diffuseIntensity=I.directLight,$r(m,t.viewMatrix,t.projectionMatrix,I.boneMatricesCache,u,t.position,t.target,d);let h=(t,n,r,i,a)=>{e.draw({pipeline:t,vertexBuffers:[n],indexBuffer:r,indexCount:i,bindGroup:a})};for(let e of Bn){let t=f[e],i=a[e];t.inner&&(m.uniforms.u_alphaTest=0,h(n,i.innerVertexBuffer,i.innerIndexBuffer,i.innerIndexCount,m.skinBindGroup)),t.outer&&(m.uniforms.u_alphaTest=.01,h(r,i.outerVertexBuffer,i.outerIndexBuffer,i.outerIndexCount,m.skinBindGroup))}if(m.uniforms.u_alphaTest=.01,d&&p!==`none`){let e=p===`cape`;h(i,e?o:c,e?s:l,(e?I.capeGeometry:I.elytraGeometry).indexCount,m.capeBindGroup)}}e.endFrame()};return I.renderLoop=qn(e=>{I.disposed||(Pn(I.controls,e),Dr(I.animationController,e),I.animationController.isPlaying&&(I.boneMatricesDirty=!0))},ne),{get backend(){return I.renderer.backend},get isPlaying(){return I.animationController.isPlaying},get currentAnimation(){return I.animationController.currentAnimation},get onZoomChange(){return I.controls.onDistanceChange},set onZoomChange(e){I.controls.onDistanceChange=e},get onRotationChange(){return I.controls.onRotationChange},set onRotationChange(e){I.controls.onRotationChange=e},async setSkin(e){if(!I.disposed&&(I.skinTexture&&=(I.skinTexture.dispose(),null),e)){let t=await ke(e);if(I.disposed)return;let n=await I.renderer.createTexture(t,j);if(I.disposed){n.dispose();return}I.skinTexture=n}},async setCape(e){if(!I.disposed)if(I.capeTexture&&=(I.capeTexture.dispose(),null),e){let t=await Ae(e);if(I.disposed)return;let n=await I.renderer.createTexture(t,j);if(I.disposed){n.dispose();return}I.capeTexture=n,I.backEquipment===`none`&&(I.backEquipment=`cape`)}else I.backEquipment=`none`},setBackEquipment(e){I.backEquipment=e},get backEquipment(){return I.backEquipment},getPartsVisibility(){let e={};for(let t of Bn)e[t]={...I.partsVisibility[t]};return e},setPartsVisibility(e){for(let t of Bn)I.partsVisibility[t]={...e[t]}},setPartVisibility(e,t,n){t===`both`?(I.partsVisibility[e].inner=n,I.partsVisibility[e].outer=n):I.partsVisibility[e][t]=n},setAmbientLight(e){I.ambientLight=Math.max(0,Math.min(1,e))},getAmbientLight(){return I.ambientLight},setDirectLight(e){I.directLight=Math.max(0,Math.min(1,e))},getDirectLight(){return I.directLight},setSlim(e){if(I.disposed)return;let t=e?`slim`:`classic`;if(t===I.variant)return;let n=I.animationController.currentAnimation,r=I.animationController.isPlaying,i=I.animationController.isPaused;I.variant=t,I.skeleton=Un(t),I.animationController=Er(I.skeleton),n&&r&&(I.animationController.play(n),i&&I.animationController.pause()),Vr(I.partBuffers),I.partGeometries=Rr(t),I.partBuffers=Br(I.renderer,I.partGeometries),I.boneMatricesDirty=!0},playAnimation(e,t){I.animationController.play(e,t)},pauseAnimation(){I.animationController.pause()},resumeAnimation(){I.animationController.resume()},stopAnimation(){I.animationController.stop(),Kn(I.skeleton),I.boneMatricesDirty=!0},setAnimationSpeed(e){I.animationController.setSpeed(e)},setAnimationAmplitude(e){I.animationController.setAmplitude(e)},get isPaused(){return I.animationController.isPaused},setRotation(e,t){Fn(I.controls,e,t)},getRotation(){return In(I.controls)},setZoom(e){Ln(I.controls,e)},getZoom(){return Rn(I.controls)},setAutoRotate(e){I.controls.autoRotate=e},setAutoRotateSpeed(e){I.controls.autoRotateSpeed=e},setEnableRotate(e){I.controls.enableRotate=e},setEnableZoom(e){I.controls.enableZoom=e},resetCamera(){zn(I.controls)},render:ne,startRenderLoop:()=>Jn(I.renderLoop),stopRenderLoop:()=>Yn(I.renderLoop),resize(e,t){I.disposed||(I.renderer.resize(e,t),kn(I.camera,e/t))},screenshot(e=`png`,n=.92){return ne(),t.toDataURL(`image/${e}`,n)},async setPanorama(e){if(I.disposed||(I.backgroundRenderer&&=(I.backgroundRenderer.dispose(),null),e===null))return;let t=i(`panorama`);if(!t){console.warn(ei);return}I.backgroundRenderer=t.createRenderer(h),await I.backgroundRenderer.setSource(e),I.disposed&&(I.backgroundRenderer.dispose(),I.backgroundRenderer=null)},dispose(){if(!I.disposed){I.disposed=!0,Yn(I.renderLoop),I.controls.dispose(),Vr(I.partBuffers);for(let e of[I.skinPipeline,I.overlayPipeline,I.capePipeline,I.capeVertexBuffer,I.capeIndexBuffer,I.elytraVertexBuffer,I.elytraIndexBuffer,I.skinTexture,I.capeTexture,I.backgroundRenderer])e?.dispose();I.renderer.dispose()}}}}let ni=null;function ri(e){ni=e}function ii(e,t){return typeof ImageData<`u`?new ImageData(e,t):Y(1,1).getContext(`2d`).createImageData(e,t)}function Y(e,t){if(ni)return ni(e,t);if(typeof document<`u`&&typeof document.createElement==`function`){let n=document.createElement(`canvas`);return n.width=e,n.height=t,n}throw Error(`No canvas environment detected. Call setCreateCanvas() with your canvas library before using render functions. Example: setCreateCanvas((w, h) => createCanvas(w, h))`)}function ai(e){return typeof e==`object`&&!!e&&`data`in e&&`width`in e&&`height`in e&&e.data instanceof Uint8ClampedArray}function oi(e){return typeof e==`object`&&!!e&&typeof e.width==`number`&&typeof e.height==`number`}function si(e){let t=Y(e.width,e.height).getContext(`2d`);return t.drawImage(e,0,0),t.getImageData(0,0,e.width,e.height)}function ci(e){let t=e.width,n=e.height;if(t===n)return e;let r=t/64,i=ii(t,t),a=e.data,o=i.data;for(let e=0;e<n;e++)for(let n=0;n<t;n++){let r=(e*t+n)*4;o[r]=a[r],o[r+1]=a[r+1],o[r+2]=a[r+2],o[r+3]=a[r+3]}let s=r;return li(a,o,t,Math.round(40*s),Math.round(16*s),Math.round(32*s),Math.round(48*s),Math.round(16*s),Math.round(16*s)),li(a,o,t,0,Math.round(16*s),Math.round(16*s),Math.round(48*s),Math.round(16*s),Math.round(16*s)),i}function li(e,t,n,r,i,a,o,s,c){for(let l=0;l<c;l++)for(let c=0;c<s;c++){let u=((i+l)*n+(r+s-1-c))*4,d=((o+l)*n+(a+c))*4;t[d]=e[u],t[d+1]=e[u+1],t[d+2]=e[u+2],t[d+3]=e[u+3]}}async function X(e,t){let n;if(ai(e))n=e;else if(typeof e==`string`||e instanceof Blob)n=si(await Te(e));else if(oi(e))n=si(e);else throw Error(`Unsupported texture source type`);xe(n.width,n.height)&&(n=ci(n));let r=n.width/64,i=t?`slim`:`classic`,a=be(i);return{variant:i,textureScale:r,head:ui(n,a.head.inner,a.head.outer,r),body:ui(n,a.body.inner,a.body.outer,r),leftArm:ui(n,a.leftArm.inner,a.leftArm.outer,r),rightArm:ui(n,a.rightArm.inner,a.rightArm.outer,r),leftLeg:ui(n,a.leftLeg.inner,a.leftLeg.outer,r),rightLeg:ui(n,a.rightLeg.inner,a.rightLeg.outer,r)}}function ui(e,t,n,r){return{inner:di(e,t,r),outer:di(e,n,r)}}function di(e,t,n){return{front:fi(e,t.front,n),back:fi(e,t.back,n),left:fi(e,t.left,n),right:fi(e,t.right,n),top:fi(e,t.top,n),bottom:fi(e,t.bottom,n)}}function fi(e,t,n){let{u1:r,v1:i,u2:a,v2:o}=t,s=Math.round(r*n),c=Math.round(i*n),l=Math.round((a-r)*n),u=Math.round((o-i)*n),d=ii(l,u),f=e.data,p=d.data,m=e.width;for(let e=0;e<u;e++)for(let t=0;t<l;t++){let n=((c+e)*m+(s+t))*4,r=(e*l+t)*4;p[r]=f[n],p[r+1]=f[n+1],p[r+2]=f[n+2],p[r+3]=f[n+3]}return d}function Z(e){let t=e.getContext(`2d`);return t.imageSmoothingEnabled=!1,t}function pi(e,t,n,r,i){let a=Y(t.width,t.height);a.getContext(`2d`).putImageData(t,0,0),e.drawImage(a,0,0,t.width,t.height,n,r,t.width*i,t.height*i)}function mi(e,t,n,r,i,a,o=!1,s=1){let c=a/s;if(pi(e,t,r,i,c),n)if(o){let t=a*.5,o=Y(n.width,n.height);o.getContext(`2d`).putImageData(n,0,0);let l=(n.width+s)*c,u=(n.height+s)*c;e.drawImage(o,0,0,n.width,n.height,r-t,i-t,l,u)}else pi(e,n,r,i,c)}function hi(e,t,n,r,i,a,o,s){for(let c of n){let n=t[c.partName];mi(e,n.inner[c.face],r?n.outer[c.face]:null,o+c.x*i,o+c.y*i,i,a,s)}}async function gi(e,t){let n=t.scale??8,r=t.showOverlay??!0,i=t.overlayInflated??!1,a=await X(t.skin,t.slim),o=r&&i?n*.5:0,s=8*n+2*o,c=8*n+2*o;e.width=s,e.height=c;let l=Z(e);l.clearRect(0,0,s,c),mi(l,a.head.inner.front,r?a.head.outer.front:null,o,o,n,i,a.textureScale)}async function _i(e,t){let n=t.scale??8,r=t.showOverlay??!0,i=t.overlayInflated??!1,a=await X(t.skin,t.slim),o=a.variant===`slim`?3:4,s=o*2+8,c=r&&i?n*.5:0,l=s*n+2*c,u=32*n+2*c;e.width=l,e.height=u;let d=Z(e);d.clearRect(0,0,l,u);let f=o;hi(d,a,[{partName:`leftLeg`,face:`front`,x:f+4,y:20},{partName:`rightLeg`,face:`front`,x:f,y:20},{partName:`body`,face:`front`,x:f,y:8},{partName:`rightArm`,face:`front`,x:0,y:8},{partName:`leftArm`,face:`front`,x:f+8,y:8},{partName:`head`,face:`front`,x:f,y:0}],r,n,i,c,a.textureScale)}async function vi(e,t){let n=t.scale??8,r=t.showOverlay??!0,i=t.overlayInflated??!1,a=await X(t.skin,t.slim),o=a.variant===`slim`?3:4,s=o*2+8,c=r&&i?n*.5:0,l=s*n+2*c,u=32*n+2*c;e.width=l,e.height=u;let d=Z(e);d.clearRect(0,0,l,u);let f=o;hi(d,a,[{partName:`rightLeg`,face:`back`,x:f+4,y:20},{partName:`leftLeg`,face:`back`,x:f,y:20},{partName:`body`,face:`back`,x:f,y:8},{partName:`leftArm`,face:`back`,x:0,y:8},{partName:`rightArm`,face:`back`,x:f+8,y:8},{partName:`head`,face:`back`,x:f,y:0}],r,n,i,c,a.textureScale)}async function yi(e,t){let n=t.scale??8,r=t.showOverlay??!0,i=t.overlayInflated??!1,a=await X(t.skin,t.slim),o=r&&i?n*.5:0,s=8*n+2*o,c=32*n+2*o;e.width=s,e.height=c;let l=Z(e);l.clearRect(0,0,s,c),hi(l,a,[{partName:`rightLeg`,face:`right`,x:2,y:20},{partName:`body`,face:`right`,x:2,y:8},{partName:`rightArm`,face:`right`,x:2,y:8},{partName:`head`,face:`right`,x:0,y:0}],r,n,i,o,a.textureScale)}async function bi(e,t){let n=t.scale??8,r=t.showOverlay??!0,i=t.overlayInflated??!1,a=await X(t.skin,t.slim),o=r&&i?n*.5:0,s=8*n+2*o,c=32*n+2*o;e.width=s,e.height=c;let l=Z(e);l.clearRect(0,0,s,c),hi(l,a,[{partName:`leftLeg`,face:`left`,x:2,y:20},{partName:`body`,face:`left`,x:2,y:8},{partName:`leftArm`,face:`left`,x:2,y:8},{partName:`head`,face:`left`,x:0,y:0}],r,n,i,o,a.textureScale)}let Q=.5,$=null,xi=null;function Si(e){return(!$||$.width<e.width||$.height<e.height)&&($=Y(e.width,e.height),xi=$.getContext(`2d`)),($.width!==e.width||$.height!==e.height)&&($.width=e.width,$.height=e.height,xi=$.getContext(`2d`)),xi.clearRect(0,0,e.width,e.height),xi.putImageData(e,0,0),$}function Ci(e,t,n,r,i,a,o,s){let c=i*s,l=a*s,u=o*s*Q,d=Si(t);e.drawImage(d,0,0,t.width,t.height,n+u,r-.5*u,c,l)}function wi(e,t,n,r,i,a,o,s){let c=a*s,l=o*s*Q,u=Si(t);e.save(),e.setTransform(1,-.5,0,1,n,r),e.drawImage(u,0,0,t.width,t.height,0,0,l,c),e.restore(),e.setTransform(1,0,0,1,0,0),e.imageSmoothingEnabled=!1}function Ti(e,t,n,r,i,a,o,s){let c=i*s,l=a*s,u=o*s*Q,d=Si(t);e.save(),e.setTransform(1,0,-1,.5,n+u,r+l-.5*u),e.drawImage(d,0,0,t.width,t.height,0,0,c,u),e.restore(),e.setTransform(1,0,0,1,0,0),e.imageSmoothingEnabled=!1}function Ei(e,t,n,r,i,a,o,s){let c=i*s,l=a*s,u=o*s*Q,d=Si(t);e.save(),e.setTransform(1,-.5,0,1,n+c,r),e.drawImage(d,0,0,t.width,t.height,0,0,u,l),e.restore(),e.setTransform(1,0,0,1,0,0),e.imageSmoothingEnabled=!1}function Di(e,t,n,r,i,a,o){let s=i*o,c=a*o,l=Si(t);e.drawImage(l,0,0,t.width,t.height,n,r,s,c)}function Oi(e,t,n,r,i,a,o){let s=i*o,c=a*o*Q,l=Si(t);e.save(),e.setTransform(1,0,-1,.5,n+c,r-.5*c),e.drawImage(l,0,0,t.width,t.height,0,0,s,c),e.restore(),e.setTransform(1,0,0,1,0,0),e.imageSmoothingEnabled=!1}function ki(e,t,n,r){for(let i of t)if(i.outer)if(r){let t=n*.5;Ci(e,i.outer.back,i.x-t,i.y-t,i.w+1,i.h+1,i.d+1,n),wi(e,i.outer.right,i.x-t,i.y-t,i.w+1,i.h+1,i.d+1,n),Ti(e,i.outer.bottom,i.x-t,i.y-t,i.w+1,i.h+1,i.d+1,n)}else Ci(e,i.outer.back,i.x,i.y,i.w,i.h,i.d,n),wi(e,i.outer.right,i.x,i.y,i.w,i.h,i.d,n),Ti(e,i.outer.bottom,i.x,i.y,i.w,i.h,i.d,n)}function Ai(e,t,n,r){for(let i of t)if(Ei(e,i.inner.left,i.x,i.y,i.w,i.h,i.d,n),i.outer)if(r){let t=n*.5;Ei(e,i.outer.left,i.x-t,i.y-t,i.w+1,i.h+1,i.d+1,n)}else Ei(e,i.outer.left,i.x,i.y,i.w,i.h,i.d,n)}function ji(e,t,n,r){for(let i of t)if(Oi(e,i.inner.top,i.x,i.y,i.w,i.d,n),i.outer)if(r){let t=n*.5;Oi(e,i.outer.top,i.x-t,i.y-t,i.w+1,i.d+1,n)}else Oi(e,i.outer.top,i.x,i.y,i.w,i.d,n)}function Mi(e,t,n){for(let r of t)Di(e,r.inner.front,r.x,r.y,r.w,r.h,n)}function Ni(e,t,n,r){for(let i of t)if(i.outer)if(r){let t=n*.5;Di(e,i.outer.front,i.x-t,i.y-t,i.w+1,i.h+1,n)}else Di(e,i.outer.front,i.x,i.y,i.w,i.h,n)}async function Pi(e,t){let n=t.scale??8,r=t.showOverlay??!0,i=t.overlayInflated??!1,a=await X(t.skin,t.slim),o=a.variant===`slim`?3:4,s=r&&i?1:0,c=s*.5*n,l=-2*Q*n,u=2*Q*.5*n,d=o+8+6*Q,f=2*o+8+4*Q,p=(Math.max(d,f)+2*s)*n,m=6*Q*.5+s,h=Math.ceil((32+m+s*.5)*n),g=Math.ceil(p),_=Math.ceil(h);e.width=g,e.height=_;let v=Z(e);v.clearRect(0,0,g,_);let y=Math.ceil(m*n),b=o*n+c,x=r,S=i,C={inner:a.leftArm.inner,outer:x?a.leftArm.outer:null,x:b+8*n,y:y+8*n,w:o,h:12,d:4},w={inner:a.leftLeg.inner,outer:x?a.leftLeg.outer:null,x:b+4*n,y:y+20*n,w:4,h:12,d:4},T={inner:a.body.inner,outer:x?a.body.outer:null,x:b,y:y+8*n,w:8,h:12,d:4},E={inner:a.rightLeg.inner,outer:x?a.rightLeg.outer:null,x:b,y:y+20*n,w:4,h:12,d:4},D={inner:a.rightArm.inner,outer:x?a.rightArm.outer:null,x:c,y:y+8*n,w:o,h:12,d:4},O={inner:a.head.inner,outer:x?a.head.outer:null,x:b+l,y:y+u,w:8,h:8,d:8},k=[C,w,T,E,D],ee=[C,w,E,D];ki(v,k,n,S),Ai(v,k,n,S),ji(v,k,n,S),Mi(v,k,n),Ni(v,ee,n,S),Ni(v,[T],n,S),ki(v,[O],n,S),Ai(v,[O],n,S),ji(v,[O],n,S),Mi(v,[O],n),Ni(v,[O],n,S)}async function Fi(e,t){let n=t.scale??8,r=t.showOverlay??!0,i=t.overlayInflated??!1,a=await X(t.skin,t.slim),o=a.variant===`slim`?3:4,s=o*2+8,c=r&&i?n*.5:0,l=s*n+2*c,u=20*n+2*c;e.width=l,e.height=u;let d=Z(e);d.clearRect(0,0,l,u);let f=o;hi(d,a,[{partName:`body`,face:`front`,x:f,y:8},{partName:`rightArm`,face:`front`,x:0,y:8},{partName:`leftArm`,face:`front`,x:f+8,y:8},{partName:`head`,face:`front`,x:f,y:0}],r,n,i,c,a.textureScale)}function Ii(e,t){let n=ii(e.width,e.height);n.data.set(e.data);let r=t.data,i=n.data;for(let e=0;e<r.length;e+=4){let t=r[e+3];if(t>0){let n=t/255,a=1-n;i[e]=Math.round(r[e]*n+i[e]*a),i[e+1]=Math.round(r[e+1]*n+i[e+1]*a),i[e+2]=Math.round(r[e+2]*n+i[e+2]*a),i[e+3]=Math.min(255,t+Math.round(i[e+3]*a))}}return n}function Li(e){let t=Y(e.width,e.height);return t.getContext(`2d`).putImageData(e,0,0),t}function Ri(e,t,n){let r=Y(t,n),i=r.getContext(`2d`);return i.imageSmoothingEnabled=!1,i.drawImage(e,0,0,e.width,e.height,0,0,t,n),r}function zi(e,t,n,r,i,a){let o=new Map,s=0,c=0,l=0,u=0;for(let d=0;d<i;d++){let i=((n+d)*a+t)*4;for(let t=0;t<r;t++){let n=i+t*4;if(e[n+3]<=128)continue;let r=e[n],a=e[n+1],d=e[n+2],f=r<<16|a<<8|d,p=(o.get(f)??0)+1;o.set(f,p),p>s&&(s=p,c=r,l=a,u=d)}}return{r:c,g:l,b:u}}function Bi(e,t,n,r,i,a,o){for(let s=0;s<a;s++){let a=((r+s)*o+n)*4;for(let n=0;n<i;n++){let r=a+n*4;e[r+3]>128&&(e[r]=t.r,e[r+1]=t.g,e[r+2]=t.b)}}}function Vi(e){let t=ii(e.width,e.height);return t.data.set(e.data),t}function Hi(e){let t=Vi(e),n=t.data,r=t.width,i=Math.floor(t.width/2),a=Math.floor(t.height/3);for(let e=0;e<3;e++)for(let o=0;o<2;o++){let s=o*i,c=e*a,l=o===1?t.width-i:i,u=e===2?t.height-2*a:a;Bi(n,zi(n,s,c,l,u,r),s,c,l,u,r)}return t}function Ui(e){let t=Vi(e),n=t.data,r=t.width,i=t.height,a=Math.floor(i*.75),o=i-a,s=Math.floor(i*.5),c=zi(n,0,0,t.width,a,r),l=zi(n,0,a,t.width,o,r);return Bi(n,c,0,0,t.width,s,r),Bi(n,l,0,s,t.width,i-s,r),t}function Wi(e){let t=Vi(e),n=t.data,r=t.width;return Bi(n,zi(n,0,0,t.width,t.height,r),0,0,t.width,t.height,r),t}function Gi(e,t,n,r,i,a,o){a<=0||(e.fillStyle=o,e.fillRect(t-a,n-a,r+2*a,a),e.fillRect(t-a,n+i,r+2*a,a),e.fillRect(t-a,n-a,a,i+2*a),e.fillRect(t+r,n-a,a,i+2*a))}async function Ki(e,t){let n=t.border??2,r=t.borderColor??`black`,i=t.showOverlay??!0,a=t.scale??20,o=await X(t.skin,t.slim),s=i?Ii(o.head.inner.front,o.head.outer.front):o.head.inner.front,c=i?Ii(o.body.inner.front,o.body.outer.front):o.body.inner.front,l=i?Ii(o.leftArm.inner.front,o.leftArm.outer.front):o.leftArm.inner.front,u=i?Ii(o.rightArm.inner.front,o.rightArm.outer.front):o.rightArm.inner.front,d=i?Ii(o.leftLeg.inner.front,o.leftLeg.outer.front):o.leftLeg.inner.front,f=i?Ii(o.rightLeg.inner.front,o.rightLeg.outer.front):o.rightLeg.inner.front,p=Ri(Li(s),16,16),m=Ri(Li(Hi(c)),4,6),h=Ri(Li(Ui(l)),2,4),g=Ri(Li(Ui(u)),2,4),_=Ri(Li(Wi(d)),2,2),v=Ri(Li(Wi(f)),2,2),y=Y(4,2),b=y.getContext(`2d`);b.imageSmoothingEnabled=!1,b.drawImage(_,0,0),b.drawImage(v,2,0);let x=p.width,S=p.height,C=m.width,w=m.height,T=Math.max(h.height,g.height),E=y.width,D=y.height,O=Math.max(x+2*n,h.width+C+g.width+4*n,E+2*n),k=S+Math.max(w,T)+D+4*n,ee=O*a,A=k*a;e.width=ee,e.height=A;let j=Z(e);j.clearRect(0,0,ee,A);let M=Y(O,k),N=M.getContext(`2d`);N.imageSmoothingEnabled=!1;let P=n,te=(O-x)/2;Gi(N,te,P,x,S,n,r),N.drawImage(p,te,P),P+=S+n;let F=P,I=(O-(h.width+C+g.width+2*n))/2;Gi(N,I,F,h.width,h.height,n,r),N.drawImage(h,I,F);let ne=I+h.width+n;Gi(N,ne,F,C,w,n,r),N.drawImage(m,ne,F);let re=ne+C+n;Gi(N,re,F,g.width,g.height,n,r),N.drawImage(g,re,F),P+=Math.max(w,T)+n;let ie=(O-E)/2;Gi(N,ie,P,E,D,n,r),N.drawImage(y,ie,P),j.drawImage(M,0,0,ee,A)}function qi(e,t){e.width=t.width,e.height=t.height,e.getContext(`2d`).putImageData(t,0,0)}return s(te),s(_e),s(Tn),e.BoneIndex=B,e.EPSILON=1e-6,e.HALF_PI=Sn,e.PART_NAMES=Bn,e.PI=bn,e.PanoramaPlugin=Tn,e.TWO_PI=xn,e.WebGLRendererPlugin=te,e.WebGPURendererPlugin=_e,e.approxEquals=fn,e.bounce=sr,e.clamp=cn,e.createAnimationController=Er,e.createCamera=Dn,e.createDefaultVisibility=Vn,e.createOrbitControls=Mn,e.createPlayerSkeleton=Un,e.createSkinViewer=ti,e.degToRad=z,e.detectBestBackend=b,e.drawToCanvas=qi,e.easeInCubic=er,e.easeInOutCubic=nr,e.easeInOutQuad=$n,e.easeInOutSine=U,e.easeInQuad=Zn,e.easeInSine=rr,e.easeOutCubic=tr,e.easeOutQuad=Qn,e.easeOutSine=ir,e.elastic=cr,e.fract=vn,e.getAnimation=dr,e.getRegisteredAnimations=fr,e.halfSine=or,e.isPowerOfTwo=hn,e.isWebGL2Supported=y,e.isWebGPUSupported=v,e.isZero=dn,e.lerp=ln,e.linear=Xn,e.loadCapeTexture=Ae,e.loadElytraTexture=je,e.loadSkinTexture=ke,e.mapRange=pn,e.mat4Clone=lt,e.mat4Copy=ut,e.mat4FromRotationX=mt,e.mat4FromRotationY=ht,e.mat4FromRotationZ=gt,e.mat4FromScaling=pt,e.mat4FromTranslation=ft,e.mat4FromTranslationMut=Nt,e.mat4GetScaling=Ot,e.mat4GetTranslation=Dt,e.mat4Identity=st,e.mat4IdentityMut=kt,e.mat4Invert=Tt,e.mat4LookAt=wt,e.mat4LookAtMut=Ft,e.mat4Multiply=dt,e.mat4MultiplyMut=At,e.mat4Ortho=Ct,e.mat4Perspective=St,e.mat4PerspectiveMut=Pt,e.mat4RotateX=yt,e.mat4RotateY=bt,e.mat4RotateZ=xt,e.mat4Scale=vt,e.mat4ScaleMut=Mt,e.mat4Translate=_t,e.mat4TranslateMut=jt,e.mat4Transpose=Et,e.mat4Zero=ct,e.nextPowerOfTwo=gn,e.quat=Lt,e.quatClone=Rt,e.quatCopyMut=en,e.quatDot=Zt,e.quatEquals=Xt,e.quatFromAxisAngle=zt,e.quatFromEuler=R,e.quatGetAxisAngle=Yt,e.quatIdentity=It,e.quatIdentityMut=tn,e.quatInvert=Gt,e.quatLength=Qt,e.quatMultiply=Bt,e.quatMultiplyMut=nn,e.quatNormalize=Wt,e.quatNormalizeMut=rn,e.quatRotateVec3=Jt,e.quatRotateX=Vt,e.quatRotateY=Ht,e.quatRotateZ=Ut,e.quatSlerp=Kt,e.quatSlerpMut=an,e.quatToFloat32Array=$t,e.quatToMat4=qt,e.quatToMat4Mut=on,e.radToDeg=sn,e.registerAnimation=ur,e.renderAvatar=gi,e.renderBigHead=Ki,e.renderHalfBody=Fi,e.renderSkinBack=vi,e.renderSkinFront=_i,e.renderSkinIsometric=Pi,e.renderSkinLeftSide=bi,e.renderSkinRightSide=yi,e.seededRandom=yn,e.setCreateCanvas=ri,e.sign=_n,e.sineWave=ar,e.smoothstep=un,e.updateAnimationController=Dr,e.use=s,e.vec3=Ie,e.vec3Add=Re,e.vec3AddMut=$e,e.vec3Clone=Le,e.vec3CopyMut=at,e.vec3Cross=Ue,e.vec3CrossMut=it,e.vec3Distance=Ye,e.vec3Dot=He,e.vec3Equals=Xe,e.vec3Length=We,e.vec3LengthSq=Ge,e.vec3Lerp=Je,e.vec3LerpMut=nt,e.vec3Mul=Ve,e.vec3Negate=qe,e.vec3Normalize=Ke,e.vec3NormalizeMut=rt,e.vec3Scale=Be,e.vec3ScaleMut=tt,e.vec3Sub=ze,e.vec3SubMut=et,e.vec3ToFloat32Array=Qe,e.vec3TransformMat4=Ze,e.vec3Zero=Fe,e.vec3ZeroMut=ot,e.wrap=mn,e})({});
+    </script>
+    <script>
+        (function () {
+            var SKIN_ONLINE = 'https://s.namemc.com/i/5e0d50081eb7638d.png';
+            var SKIN_LOCAL = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAMAAACdt4HsAAAAtFBMVEUAAAAAAAAA2coA7b4xKDg/NkdIT2FKPlJKSmlQVmZUWG5Ulv9VT2FdSmFdz7BgZX1ho/9mzP9rU3BrcYps4Mlusf9wuv9wvP9xWnN39+Z9oP+AhZyA1P+MjqiWmLWW3P+hoceprMmw5f+yq8+4u9S8s8S8tta/xt7F0OjJw97Rz+bd3fDk5Pfm+f/rvN3tx+Dw8P/y+f/3zeL4+P//1uT/4Oj/4PH/6O3/8PH/9fX/+vr///+sJ1w8AAAAAXRSTlMAQObYZgAABMZJREFUeNrtlm1D4jgQx5NdYhWvaytqbzd0MJojpbBLLe02kO//vW4mbaUrcIqv7z95bJhfJxLJsF5aKU01NRplUvZWcaJNEjMGTCpsDmSyTOssMycBDOmKsRRwwOBwXWkvdRKgDSijfQTsnQiq6hggI0DmfY8CshaQWVuhrD38gAalM9br5BasrauqPgLQGfrrfnZ6C2C9jsSIdMNOK2v/eNl/AIxWx0I3ymRYWgD1CgsaTLSegDkJiBOj/bnQgLFpYzSJeqXxEeDTNMURY7ioNPoro/ueQCAZk7icaqkUIF2CxIIDUEqSs1Qp9gznRikEg1ZAMJyCZqiLC2qVB2CBhgqNCIBVpRobZojh34pFae+dGsYkgwwbAmiVgoKrK2iwKkj9I5Whu//qnGOpP8VYGA5S5hwuZswAy4iZXl5OpLr6+aXZfvl5peTk8jL1AKkIYNz0gQEB2oCBPUydoa8UDDMdoEaA+2q3Xx0Cag+ANgJQmj38wBCAeQEG8OOBaYXeSlIQoLSu7ATS3xb1O4WJrTSuQxsB+Hcy6UvfQ7shqbDxkhDNkvsoYp3k5GI8vphICffT+ylI1mlnm6Yug4DtNQBE19f9fDK+QI0nMiVA+gpwO2ubY4BZNIuGgBvudYPe3gYAZ6sTANrCOwDawgEAnYcGEmO/abjgWJobnMjJ2Da4G7vD+G1ToxprBxC3Ghrc2LJsGp5w/oM3TVnaOLFba5O4QW9yL8uqqpsBAHnbbV39+lWWWGVNAO7yJModJwDI3dbuJMy9StJ6Ph8A0B+Dq9frul6Xzbixdcn5yqFWnJe1VVDZpgS1+X63KZaPXstiALAegO/C6CqMU4zEiIf0Nwg5D4JA6Rp3rpW7++Y2+fPz4+PzPN8MAPytlmIhxEoU2C34kisd2ibUKrwNA0R7jcQAIAJcGKzwJY5FgbYiGgcjbkNuILz9Owz6jwUDwCi4DYJwNOpXsO0AgpMgo0kGQYgAwb3EHwARIkAQYYQBiDiextMWQKMYDE0MAvBF/ceGgKJwRbFa5ovn58UiXxUewAV68YQAqea5yHV6GuBQRZHn8/lisSqKmA5vggSOPVqq6DtRHuAJ5D8ExNNpHNM/wvV1FN0nMQGGJhW1SjZ255yt8MRVZW0R8L/2emJP0Yz1dig5oXYiTwIc/SKw3jrxrvm8CipeIKmV4EhFt+recefOYWjOh6DAY1R/bld42Ni7CgVjIuzuMmq1Yh+VQ5svcQMrNqfJpwCsaDtq2xzFADtPHYCU0TBjnwcYGppPAF61QjtDU7J2lNDobM32do+1e3KmohnIPF8W+8tnV9bNX/+cBVjMF6+A7c6VjT0DQPf0G0Bl3ZmAN1s4DZi1FlFlfrQ3CbOoSwi69ODl5QDgWltRZX60txtwq6osCdGmBxUC3tOaMoUacwbKRmS1LknzTusOUDiv4hiADzXmvEsINnffMT1YvLz88YNQnADQ7SVCfxFxSgie8437duc2+fwDW+D95Uf5QLC/9jE/QNwHACMPCBEQCEE+HoCXOwI/DKCkA4sYkQ9JIAAfiTMAwt/E1PiIaEc0+QCgv6VnT+2t/TlAgmnGDAFxEnUJAQGQ8AFAjnlKvuxPyjKn9LOyzu0spZCHgH8BcmzpPOj6xbkAAAAASUVORK5CYII=';
+
+            var stage = document.getElementById('skinStage');
+            var canvas = document.getElementById('skinCanvas');
+            var loading = document.getElementById('skinLoading');
+
+            function fail(message) {
+                if (!loading) return;
+                loading.classList.remove('is-hidden');
+                loading.textContent = message;
+            }
+
+            var MSR = window.MSR;
+            if (!MSR || typeof MSR.createSkinViewer !== 'function') {
+                fail('渲染器未能加载');
+                return;
+            }
+            MSR.use(MSR.WebGLRendererPlugin);
+
+            // 首选在线皮肤；跨域失败时回退到内嵌的本地皮肤
+            function pickSkin() {
+                return new Promise(function (resolve) {
+                    var settled = false;
+                    var finish = function (src) {
+                        if (settled) return;
+                        settled = true;
+                        resolve(src);
+                    };
+                    var timer = setTimeout(function () { finish(SKIN_LOCAL); }, 4000);
+                    fetch(SKIN_ONLINE, { mode: 'cors', cache: 'force-cache' })
+                        .then(function (res) { return res.ok ? res.blob() : null; })
+                        .then(function (blob) {
+                            clearTimeout(timer);
+                            finish(blob && blob.size > 400 ? blob : SKIN_LOCAL);
+                        })
+                        .catch(function () {
+                            clearTimeout(timer);
+                            finish(SKIN_LOCAL);
+                        });
+                });
+            }
+
+            pickSkin()
+                .then(function (skin) {
+                    return MSR.createSkinViewer({
+                        canvas: canvas,
+                        skin: skin,
+                        slim: true,
+                        preferredBackend: 'webgl',
+                        antialias: true,
+                        fov: 50,
+                        zoom: 42,
+                        enableRotate: true,
+                        enableZoom: true,
+                        autoRotate: false,
+                        autoRotateSpeed: 18
+                    });
+                })
+                .then(function (viewer) {
+                    window.__skinViewer = viewer;
+
+                    function fit() {
+                        var rect = stage.getBoundingClientRect();
+                        if (rect.width < 2 || rect.height < 2) return;
+                        viewer.resize(rect.width, rect.height);
+                    }
+                    fit();
+                    if (window.ResizeObserver) {
+                        new ResizeObserver(function () { fit(); }).observe(stage);
+                    } else {
+                        window.addEventListener('resize', fit);
+                    }
+
+                    var rotateButtons = document.querySelectorAll('[data-rotate]');
+                    Array.prototype.forEach.call(rotateButtons, function (btn) {
+                        btn.addEventListener('click', function () {
+                            var auto = btn.getAttribute('data-rotate') === 'on';
+                            viewer.setAutoRotate(auto);
+                            Array.prototype.forEach.call(rotateButtons, function (other) {
+                                other.classList.toggle('is-active', other === btn);
+                            });
+                        });
+                    });
+
+                    var animButtons = document.querySelectorAll('[data-anim]');
+                    Array.prototype.forEach.call(animButtons, function (btn) {
+                        btn.addEventListener('click', function () {
+                            var name = btn.getAttribute('data-anim');
+                            if (viewer.currentAnimation === name) return;
+                            viewer.playAnimation(name);
+                            Array.prototype.forEach.call(animButtons, function (other) {
+                                other.classList.toggle('is-active', other === btn);
+                            });
+                        });
+                    });
+
+                    viewer.playAnimation('idle');
+                    viewer.setRotation(0.32, Math.PI / 2 - 0.06);
+                    viewer.startRenderLoop();
+
+                    if (loading) loading.classList.add('is-hidden');
+                })
+                .catch(function (err) {
+                    fail('3D 模型初始化失败：' + (err && err.message ? err.message : err));
+                });
+        })();
+    </script>
+</body>
+</html>
