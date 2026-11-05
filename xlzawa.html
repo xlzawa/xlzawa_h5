@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XLZawa · 小站</title>
+    <title>xlzawaの小站</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600&display=swap" rel="stylesheet">
@@ -124,6 +124,8 @@
             box-shadow: 0 8px 20px rgba(0,0,0,0.03);
             border: 1px solid #eef2f6;
             transition: transform 0.2s;
+			width: 70%;          /* 新增：右边界往左收*/
+            align-self: flex-start; /* 新增：靠左对齐，避免居中 */
         }
 
         .player-card:hover {
@@ -249,19 +251,6 @@
             touch-action: none;
         }
 
-        /* 脚下的柔和投影，位于 canvas 下层 */
-        .mc-stage::after {
-            content: "";
-            position: absolute;
-            left: 50%;
-            bottom: 4%;
-            width: 42%;
-            height: 20px;
-            transform: translateX(-50%);
-            background: radial-gradient(ellipse at center, rgba(70,86,110,0.22), rgba(70,86,110,0) 72%);
-            pointer-events: none;
-        }
-
         .mc-stage:active {
             cursor: grabbing;
         }
@@ -292,16 +281,16 @@
         }
 
         /* 底部铭牌：蓝色斜切 + 深黑，名字落在深黑区 */
-        .mc-nameplate {
+                .mc-nameplate {
             position: relative;
             z-index: 2;
             flex: 0 0 auto;
-            height: 3.5rem;
+            height: 2.6rem;                 /* 变细：3.5rem -> 2.6rem */
             background: #1e2930;
             display: flex;
-            align-items: center;
-            justify-content: flex-start;
-            padding: 0 1.2rem 0 46%;
+            align-items: flex-end;          /* 名字贴底部 */
+            justify-content: flex-end;      /* 名字贴右侧 */
+            padding: 0 0.9rem 0.35rem 0;    /* 右下留一点内边距 */
             overflow: hidden;
         }
 
@@ -310,7 +299,8 @@
             position: absolute;
             inset: 0;
             background: #66ccff;
-            clip-path: polygon(0 0, 44% 0, 32% 100%, 0 100%);
+            /* 两种颜色的交界往右移：44%/32% -> 65%(上方)/60%(下方) */
+            clip-path: polygon(0 0, 48% 0, 43% 100%, 0 100%);
             pointer-events: none;
         }
 
@@ -318,7 +308,7 @@
             position: relative;
             z-index: 1;
             font-weight: 700;
-            font-size: 1.2rem;
+            font-size: 1.6rem;
             letter-spacing: 0.02em;
             color: #ffffff;
             white-space: nowrap;
@@ -363,6 +353,13 @@
         }
 
         /* 右侧链接面板 */
+        .right-col {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            min-width: 0;
+        }
+
         .right-links {
             background: white;
             padding: 1.8rem 1.5rem;
@@ -467,6 +464,16 @@
         .icp-note span {
             opacity: 0.8;
         }
+		
+		/* 倾斜灰色中划线字体 */
+		.placeholder-tag {
+            font-size: 0.72em;
+            font-weight: 500;
+            color: #94a3b8;
+            font-style: italic;
+            text-decoration: line-through;
+            letter-spacing: 0;
+        }
 
         /* 响应式 */
         @media (max-width: 800px) {
@@ -518,11 +525,11 @@
                 letter-spacing: 0.1em;
             }
             .mc-nameplate {
-                height: 2.9rem;
-                padding: 0 0.75rem 0 40%;
+                height: 2.2rem;
+                padding: 0 0.6rem 0.3rem 0;
             }
             .mc-nameplate::before {
-                clip-path: polygon(0 0, 40% 0, 28% 100%, 0 100%);
+                clip-path: polygon(0 0, 58% 0, 46% 100%, 0 100%);
             }
             .player-name {
                 font-size: 0.88rem;
@@ -533,7 +540,7 @@
 <body>
     <!-- 顶栏 -->
     <header class="topbar">
-        <a href="#" class="logo" data-page="home">XLZ<span>awa</span></a>
+        <a href="#" class="logo" data-page="home">xlzawa</a>
         <nav class="nav-links">
             <a href="#" class="active" data-page="home">主页</a>
             <a href="#" data-page="unused1">未使用页面1</a>
@@ -550,9 +557,7 @@
                 <div class="left-showcase">
                     <!-- MC玩家模型卡片 -->
                     <div class="player-card">
-                        <div class="player-title">
-                            MINECRAFT 玩家
-                        </div>
+                        <div class="player-title">MINECRAFT</div>
                         <div class="mc-model">
                             <div class="mc-viewer">
                                 <div class="mc-controls" role="group" aria-label="模型控制">
@@ -584,26 +589,43 @@
                     <div class="random-image-card">
                         <div class="random-img-label">随机二次元图片</div>
                         <div class="random-img-wrapper">
-                            <img src="https://www.dmoe.cc/random.php" alt="随机动漫图片" referrerpolicy="no-referrer" loading="lazy">
+                            <img id="randomImg" src="https://www.dmoe.cc/random.php" alt="随机动漫图片" referrerpolicy="no-referrer" loading="lazy">
                         </div>
-                        <div style="font-size:0.75rem; color:#94a3b8; margin-top:0.6rem;">via dmoe.cc/random.php</div>
+                        <div style="font-size:0.75rem; margin-top:0.6rem;"><a href="https://www.dmoe.cc" target="_blank" rel="noopener" style="color:#94a3b8; text-decoration:none;">来自dmoe.cc/random.php</a></div>
                     </div>
                 </div>
 
                 <!-- 右侧区域：网站链接 -->
-                <aside class="right-links">
-                    <h2>常用链接</h2>
-                    <ul class="link-list">
-                        <li><a href="https://www.dmoe.cc" target="_blank" rel="noopener">dmoe.cc · 随机图</a></li>
-                        <li><a href="https://www.minecraft.net" target="_blank" rel="noopener">Minecraft 官网</a></li>
-                        <li><a href="https://github.com" target="_blank" rel="noopener">GitHub</a></li>
-                        <li><a href="https://www.bilibili.com" target="_blank" rel="noopener">Bilibili</a></li>
-                        <li><a href="https://www.mcbbs.net" target="_blank" rel="noopener">MCBBS</a></li>
-                    </ul>
-                    <div style="margin-top:1.5rem; font-size:0.8rem; color:#94a3b8; border-left:3px solid #3b82f6; padding-left:0.8rem;">
-                        这里是 XiaoLiZiawa2333 的小角落
-                    </div>
-                </aside>
+                <div class="right-col">
+                    <aside class="right-links">
+                        <h2>常用链接<span class="placeholder-tag">（真的常用吗）</span></h2>
+                        <ul class="link-list">
+                            <li><a href="https://www.bilibili.com" target="_blank" rel="noopener">bilibili</a></li>
+                            <li><a href="https://jian.la/xlz" target="_blank" rel="noopener">剪贴板</a></li>
+                            <li><a href="https://github.com" target="_blank" rel="noopener">GitHub</a></li>
+                            <li><a href="https://game.hullqin.cn/" target="_blank" rel="noopener">线上桌游</a></li>
+                            <li><a href="https://chat.deepseek.com" target="_blank" rel="noopener">Deepseek<span class="placeholder-tag">大肥鱼</span></a></li>
+                            <li><a href="https://luogu.com.cn/" target="_blank" rel="noopener">洛谷</a></li>
+                        </ul>
+                        <div style="margin-top:1.5rem; font-size:0.8rem; color:#94a3b8; border-left:3px solid #3b82f6; padding-left:0.8rem;">
+                            这里是 XiaoLiZiawa2333 的小站～
+                        </div>
+                    </aside>
+
+                    <!-- 友情链接 -->
+                    <aside class="right-links friend-links">
+                        <h2>友情链接</h2>
+                        <ul class="link-list">
+                            <li><a href="https://mcskin.daidr.me/" target="_blank" rel="noopener">皮肤渲染器 · daidr</a></li>
+                            <li><a href="https://zh.moegirl.org.cn/" target="_blank" rel="noopener">萌娘百科</a></li>
+                            <li><a href="https://www.luogu.com.cn/" target="_blank" rel="noopener">洛谷</a></li>
+                            <li><a href="https://github.com/daidr" target="_blank" rel="noopener">daidr · GitHub</a></li>
+                        </ul>
+                        <div style="margin-top:1.5rem; font-size:0.8rem; color:#94a3b8; border-left:3px solid #66ccff; padding-left:0.8rem;">
+                            欢迎交换友链，直接把你的站点丢给我～
+                        </div>
+                    </aside>
+                </div>
             </div>
         </div>
 
@@ -627,14 +649,13 @@
     <!-- 底部备案区域 -->
     <footer class="footer">
         <div class="icp-note">
-            <span>© 2025 XLZawa</span>
+            <span>© 2025 xlzawa</span>
             <span>|</span>
             <span>ICP备案号：</span>
-            <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener">京ICP备XXXXXXXX号-1</a>
-            <span>（示例）</span>
+            <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener">还没有备案（躺）</a>
         </div>
         <div style="margin-top:0.5rem; font-size:0.75rem; opacity:0.7;">
-            XiaoLiZiawa2333 的个人站点 · 保留所有权利
+            xlzawa2333的个人站点 |  保留所有权利
         </div>
     </footer>
 
@@ -1127,6 +1148,20 @@ void main() {
                 .catch(function (err) {
                     fail('3D 模型初始化失败：' + (err && err.message ? err.message : err));
                 });
+        })();
+    </script>
+	<script>/*二次元图片刷新*/
+        (function () {
+            var wrapper = document.querySelector('.random-img-wrapper');
+            var img = document.getElementById('randomImg');
+            if (!wrapper || !img) return;
+
+            wrapper.style.cursor = 'pointer';
+
+            wrapper.addEventListener('click', function () {
+                var base = 'https://www.dmoe.cc/random.php';
+                img.src = base + '?t=' + Date.now() + Math.random();
+            });
         })();
     </script>
 </body>
