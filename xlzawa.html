@@ -107,15 +107,9 @@
         .home-layout {
             display: grid;
             grid-template-columns: 1.2fr 0.8fr;
+            align-items: start;
             gap: 2rem;
             margin-top: 1rem;
-        }
-
-        /* 左侧：模型与随机图 */
-        .left-showcase {
-            display: flex;
-            flex-direction: column;
-            gap: 1.8rem;
         }
 
         .player-card {
@@ -353,13 +347,6 @@
         }
 
         /* 右侧链接面板 */
-        .right-col {
-            display: flex;
-            flex-direction: column;
-            gap: 2rem;
-            min-width: 0;
-        }
-
         .right-links {
             background: white;
             padding: 1.8rem 1.5rem;
@@ -467,6 +454,7 @@
 		
 		/* 倾斜灰色中划线字体 */
 		.placeholder-tag {
+            white-space: nowrap;
             font-size: 0.72em;
             font-weight: 500;
             color: #94a3b8;
@@ -475,10 +463,145 @@
             letter-spacing: 0;
         }
 
+        /* ----- 顶栏主题切换按钮 ----- */
+        .theme-toggle {
+            appearance: none;
+            border: 0;
+            border-radius: 10px;
+            background: #000033;
+            color: #ffffff;
+            font: inherit;
+            font-size: 0.85rem;
+            font-weight: 500;
+            line-height: 1;
+            padding: 0.55rem 0.95rem;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: background 0.2s, color 0.2s, transform 0.12s, box-shadow 0.2s;
+            box-shadow: 0 2px 6px rgba(0,0,51,0.18);
+        }
+
+        .theme-toggle:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(0,0,51,0.22);
+        }
+
+        .theme-toggle:active {
+            transform: translateY(0);
+        }
+
+        .theme-toggle:focus-visible {
+            outline: 2px solid #93b4f7;
+            outline-offset: 2px;
+        }
+
+        html.dark .theme-toggle {
+            background: #ccffff;
+            color: #00232b;
+            box-shadow: 0 2px 8px rgba(204,255,255,0.16);
+        }
+
+        /* ----- 暗色模式：只把深色文字换成白色，灰色字保持原样 ----- */
+        html.dark body {
+            background-color: #0b1220;
+            color: #ffffff;
+        }
+
+        html.dark .topbar {
+            background-color: #0f172a;
+            border-bottom-color: #1e293b;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.35);
+        }
+
+        html.dark .logo {
+            background: none;
+            -webkit-text-fill-color: #64748b;
+            color: #64748b;
+        }
+
+        html.dark .nav-links a {
+            color: #e2e8f0;
+        }
+
+        html.dark .nav-links a:hover {
+            color: #ffffff;
+        }
+
+        html.dark .player-card,
+        html.dark .right-links,
+        html.dark .random-image-card,
+        html.dark .placeholder-page,
+        html.dark .footer {
+            background: #111827;
+            border-color: #1e293b;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.28);
+        }
+
+        html.dark .right-links h2,
+        html.dark .placeholder-page h2 {
+            color: #ffffff;
+            border-bottom-color: #1e293b;
+        }
+
+        html.dark .link-list li a {
+            color: #ffffff;
+            background: #1a2434;
+        }
+
+        html.dark .link-list li a:hover {
+            background: #22304a;
+            border-color: #334155;
+        }
+
+        html.dark .mc-model {
+            background:
+                radial-gradient(ellipse 62% 58% at 50% 44%, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0) 100%),
+                #0e1726;
+            border-color: #1e293b;
+        }
+
+        html.dark .mc-model::before {
+            background-image:
+                linear-gradient(to right, rgba(148,163,184,0.10) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(148,163,184,0.10) 1px, transparent 1px);
+        }
+
+        html.dark .mc-btn {
+            background: rgba(255,255,255,0.06);
+            border-color: #334155;
+            color: #cbd5e1;
+        }
+
+        html.dark .mc-btn:hover {
+            border-color: #475569;
+            color: #ffffff;
+        }
+
+        html.dark .mc-btn.is-active {
+            background: #2563eb;
+            border-color: #2563eb;
+            color: #ffffff;
+        }
+
+        html.dark .mc-loading {
+            background: rgba(14,23,38,0.6);
+        }
         /* 响应式 */
         @media (max-width: 800px) {
             .home-layout {
                 grid-template-columns: 1fr;
+            }
+            .player-card {
+                order: 1;
+            }
+            .random-image-card {
+                order: 2;
+            }
+            .right-links:not(.friend-links) {
+                order: 3;
+            }
+            .friend-links {
+                order: 4;
             }
             .topbar {
                 padding: 0.8rem 1rem;
@@ -536,6 +659,16 @@
             }
         }
     </style>
+    <script>
+        /* 尽早应用已保存的主题，避免闪白 */
+        (function () {
+            try {
+                if (localStorage.getItem('xlzawa-theme') === 'dark') {
+                    document.documentElement.classList.add('dark');
+                }
+            } catch (e) {}
+        })();
+    </script>
 </head>
 <body>
     <!-- 顶栏 -->
@@ -545,6 +678,7 @@
             <a href="#" class="active" data-page="home">主页</a>
             <a href="#" data-page="unused1">未使用页面1</a>
             <a href="#" data-page="unused2">未使用页面2</a>
+            <button type="button" class="theme-toggle" id="themeToggle" aria-pressed="false">变黑~🌙</button>
         </nav>
     </header>
 
@@ -553,8 +687,6 @@
         <!-- 主页 -->
         <div id="page-home" class="page active-page">
             <div class="home-layout">
-                <!-- 左侧区域：MC模型 + 随机图 -->
-                <div class="left-showcase">
                     <!-- MC玩家模型卡片 -->
                     <div class="player-card">
                         <div class="player-title">MINECRAFT</div>
@@ -585,18 +717,6 @@
                         </div>
                     </div>
 
-                    <!-- 随机图片 www.dmoe.cc/random.php -->
-                    <div class="random-image-card">
-                        <div class="random-img-label">随机二次元图片</div>
-                        <div class="random-img-wrapper">
-                            <img id="randomImg" src="https://www.dmoe.cc/random.php" alt="随机动漫图片" referrerpolicy="no-referrer" loading="lazy">
-                        </div>
-                        <div style="font-size:0.75rem; margin-top:0.6rem;"><a href="https://www.dmoe.cc" target="_blank" rel="noopener" style="color:#94a3b8; text-decoration:none;">来自dmoe.cc/random.php</a></div>
-                    </div>
-                </div>
-
-                <!-- 右侧区域：网站链接 -->
-                <div class="right-col">
                     <aside class="right-links">
                         <h2>常用链接<span class="placeholder-tag">（真的常用吗）</span></h2>
                         <ul class="link-list">
@@ -612,21 +732,29 @@
                         </div>
                     </aside>
 
+                    <!-- 随机图片 www.dmoe.cc/random.php -->
+                    <div class="random-image-card">
+                        <div class="random-img-label">随机二次元图片</div>
+                        <div class="random-img-wrapper">
+                            <img id="randomImg" src="https://www.dmoe.cc/random.php" alt="随机动漫图片" referrerpolicy="no-referrer" loading="lazy">
+                        </div>
+                        <div style="font-size:0.75rem; margin-top:0.6rem;"><a href="https://www.dmoe.cc" target="_blank" rel="noopener" style="color:#94a3b8; text-decoration:none;">来自dmoe.cc/random.php</a></div>
+                    </div>
+
                     <!-- 友情链接 -->
                     <aside class="right-links friend-links">
                         <h2>友情链接</h2>
                         <ul class="link-list">
-                            <li><a href="https://mcskin.daidr.me/" target="_blank" rel="noopener">皮肤渲染器 · daidr</a></li>
-                            <li><a href="https://zh.moegirl.org.cn/" target="_blank" rel="noopener">萌娘百科</a></li>
-                            <li><a href="https://www.luogu.com.cn/" target="_blank" rel="noopener">洛谷</a></li>
-                            <li><a href="https://github.com/daidr" target="_blank" rel="noopener">daidr · GitHub</a></li>
+                            <li><a href="https://mcskin.daidr.me/" target="_blank" rel="noopener">皮肤渲染器 daidr <span class="placeholder-tag">皮肤预览用这个做的！</span></a></li>
+                            <li><a href="https://www.ryanli.top" target="_blank" rel="noopener">RyanLi 的博客 <span class="placeholder-tag">参见学长！</span></a></li>
+                            <li><a href="https://example.com" target="_blank" rel="noopener">这里没有友链</a></li>
+                            <li><a href="https://example.com" target="_blank" rel="noopener">这里没有友链</a></li>
                         </ul>
                         <div style="margin-top:1.5rem; font-size:0.8rem; color:#94a3b8; border-left:3px solid #66ccff; padding-left:0.8rem;">
                             欢迎交换友链，直接把你的站点丢给我～
                         </div>
                     </aside>
                 </div>
-            </div>
         </div>
 
         <!-- 未使用页面1 -->
@@ -1150,7 +1278,30 @@ void main() {
                 });
         })();
     </script>
-	<script>/*二次元图片刷新*/
+    <script>/* 暗色模式切换 */
+        (function () {
+            var root = document.documentElement;
+            var btn = document.getElementById('themeToggle');
+            if (!btn) return;
+
+            function render(dark) {
+                btn.textContent = dark ? '开灯！☀' : '变黑~🌙';
+                btn.setAttribute('aria-pressed', dark ? 'true' : 'false');
+                btn.setAttribute('title', dark ? '切换到亮色模式' : '切换到暗色模式');
+            }
+
+            render(root.classList.contains('dark'));
+
+            btn.addEventListener('click', function () {
+                var dark = !root.classList.contains('dark');
+                root.classList.toggle('dark', dark);
+                render(dark);
+                try {
+                    localStorage.setItem('xlzawa-theme', dark ? 'dark' : 'light');
+                } catch (e) {}
+            });
+        })();
+    </script>	<script>/*二次元图片刷新*/
         (function () {
             var wrapper = document.querySelector('.random-img-wrapper');
             var img = document.getElementById('randomImg');
