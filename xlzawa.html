@@ -463,6 +463,78 @@
             letter-spacing: 0;
         }
 
+        /* ----- 编程相关：站点卡片 ----- */
+        .page-heading {
+            font-size: 1.6rem;
+            font-weight: 600;
+            color: #0f172a;
+            margin: 0.4rem 0 1.4rem;
+        }
+
+        .site-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 3rem;
+        }
+
+        .site-card {
+            width: 150px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.9rem;
+            padding: 1.5rem 1rem 1.1rem;
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            border-radius: 0;
+            text-decoration: none;
+            color: #1e293b;
+            transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+        }
+
+        .site-card:hover {
+            transform: translateY(-4px);
+            border-color: #2563eb;
+            box-shadow: 0 10px 22px rgba(15,23,42,0.10);
+        }
+
+        .site-card:focus-visible {
+            outline: 2px solid #93b4f7;
+            outline-offset: 2px;
+        }
+
+        .site-logo {
+            width: 64px;
+            height: 64px;
+            display: block;
+            object-fit: contain;
+            background: #f8fafc;
+        }
+
+        .site-name {
+            font-size: 0.95rem;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        html.dark .page-heading {
+            color: #ffffff;
+        }
+
+        html.dark .site-card {
+            background: #111827;
+            border-color: #334155;
+            color: #ffffff;
+        }
+
+        html.dark .site-card:hover {
+            border-color: #60a5fa;
+            box-shadow: 0 10px 22px rgba(0,0,0,0.45);
+        }
+
+        html.dark .site-logo {
+            background: #f1f5f9;
+        }
         /* ----- 顶栏主题切换按钮 ----- */
         .theme-toggle {
             appearance: none;
@@ -676,7 +748,7 @@
         <a href="#" class="logo" data-page="home">xlzawa</a>
         <nav class="nav-links">
             <a href="#" class="active" data-page="home">主页</a>
-            <a href="#" data-page="unused1">未使用页面1</a>
+            <a href="#" data-page="unused1">编程相关</a>
             <a href="#" data-page="unused2">未使用页面2</a>
             <button type="button" class="theme-toggle" id="themeToggle" aria-pressed="false">变黑~🌙</button>
         </nav>
@@ -757,11 +829,106 @@
                 </div>
         </div>
 
-        <!-- 未使用页面1 -->
+        <!-- 编程相关 -->
         <div id="page-unused1" class="page">
-            <div class="placeholder-page">
-                <h2>未使用页面 1</h2>
-                <p>这个页面还没有内容，也许以后会放些有趣的东西。</p>
+            <h2 class="page-heading">编程相关</h2>
+            <div class="site-grid">
+                <a class="site-card" href="https://www.luogu.com.cn/" target="_blank" rel="noopener">
+                    <img class="site-logo" src="https://www.luogu.com.cn/favicon.ico" data-src2="https://logos.hunter.io/www.luogu.com.cn" alt="洛谷 logo" width="64" height="64" loading="lazy">
+                    <span class="site-name">洛谷</span>
+                </a>
+                <a class="site-card" href="https://cspsjtest.noi.cn/" target="_blank" rel="noopener">
+                    <img class="site-logo" src="https://cspsjtest.noi.cn/favicon.ico" data-src2="https://logos.hunter.io/cspsjtest.noi.cn" alt="CSP-J/S 报名 logo" width="64" height="64" loading="lazy">
+                    <span class="site-name">CSP-J/S 报名</span>
+                </a>
+                <a class="site-card" href="https://github.com/xlzawa" target="_blank" rel="noopener">
+                    <img class="site-logo" src="https://github.com/favicon.ico" data-src2="https://logos.hunter.io/github.com" alt="GitHub · xlzawa logo" width="64" height="64" loading="lazy">
+                    <span class="site-name">GitHub</span>
+                </a>
+                <a class="site-card" href="https://gitee.com/xlzawa" target="_blank" rel="noopener">
+                    <img class="site-logo" src="https://gitee.com/favicon.ico" data-src2="https://logos.hunter.io/gitee.com" alt="Gitee · xlzawa logo" width="64" height="64" loading="lazy">
+                    <span class="site-name">Gitee</span>
+                </a>
+                <a class="site-card" href="https://www.csdn.net/" target="_blank" rel="noopener">
+                    <img class="site-logo" src="https://www.csdn.net/favicon.ico" data-src2="https://logos.hunter.io/www.csdn.net" alt="CSDN logo" width="64" height="64" loading="lazy">
+                    <span class="site-name">CSDN</span>
+                </a>
+                <a class="site-card" href="https://hsyzoj.com/" target="_blank" rel="noopener">
+                    <img class="site-logo" src="https://hsyzoj.com/favicon.ico" data-src2="https://logos.hunter.io/hsyzoj.com" alt="HSYZOJ logo" width="64" height="64" loading="lazy">
+                    <span class="site-name">HSYZOJ</span>
+                </a>
+                <a class="site-card" href="http://www.imutoj.top/" target="_blank" rel="noopener">
+                    <img class="site-logo" src="https://www.imutoj.top/favicon.ico" data-src2="https://logos.hunter.io/www.imutoj.top" alt="IMUTOJ logo" width="64" height="64" loading="lazy">
+                    <span class="site-name">IMUTOJ</span>
+                </a>
+                <a class="site-card" href="https://unionoj.cn/" target="_blank" rel="noopener">
+                    <img class="site-logo" src="https://unionoj.cn/favicon.ico" data-src2="https://logos.hunter.io/unionoj.cn" alt="UnionOJ logo" width="64" height="64" loading="lazy">
+                    <span class="site-name">UnionOJ</span>
+                </a>
+                <a class="site-card" href="https://hydro.ac/" target="_blank" rel="noopener">
+                    <img class="site-logo" src="https://hydro.ac/favicon.ico" data-src2="https://logos.hunter.io/hydro.ac" alt="Hydro logo" width="64" height="64" loading="lazy">
+                    <span class="site-name">Hydro</span>
+                </a>
+                <a class="site-card" href="https://oier.baoshuo.dev/" target="_blank" rel="noopener">
+                    <img class="site-logo" src="https://oier.baoshuo.dev/favicon.ico" data-src2="https://logos.hunter.io/oier.baoshuo.dev" alt="竞赛记录查询 logo" width="64" height="64" loading="lazy">
+                    <span class="site-name">竞赛记录查询</span>
+                </a>
+                <a class="site-card" href="https://oi-wiki.org/" target="_blank" rel="noopener">
+                    <img class="site-logo" src="https://oi-wiki.org/favicon.ico" data-src2="https://logos.hunter.io/oi-wiki.org" alt="OI Wiki logo" width="64" height="64" loading="lazy">
+                    <span class="site-name">OI Wiki</span>
+                </a>
+                <a class="site-card" href="https://www.runoob.com/" target="_blank" rel="noopener">
+                    <img class="site-logo" src="https://www.runoob.com/favicon.ico" data-src2="https://logos.hunter.io/www.runoob.com" alt="菜鸟教程 logo" width="64" height="64" loading="lazy">
+                    <span class="site-name">菜鸟教程</span>
+                </a>
+                <a class="site-card" href="https://loj.ac/" target="_blank" rel="noopener">
+                    <img class="site-logo" src="https://loj.ac/favicon.ico" data-src2="https://logos.hunter.io/loj.ac" alt="LibreOJ logo" width="64" height="64" loading="lazy">
+                    <span class="site-name">LibreOJ</span>
+                </a>
+                <a class="site-card" href="https://uoj.ac/" target="_blank" rel="noopener">
+                    <img class="site-logo" src="https://uoj.ac/favicon.ico" data-src2="https://logos.hunter.io/uoj.ac" alt="UOJ logo" width="64" height="64" loading="lazy">
+                    <span class="site-name">UOJ</span>
+                </a>
+                <a class="site-card" href="https://qoj.ac/" target="_blank" rel="noopener">
+                    <img class="site-logo" src="https://qoj.ac/favicon.ico" data-src2="https://logos.hunter.io/qoj.ac" alt="QOJ logo" width="64" height="64" loading="lazy">
+                    <span class="site-name">QOJ</span>
+                </a>
+                <a class="site-card" href="https://atcoder.jp/" target="_blank" rel="noopener">
+                    <img class="site-logo" src="https://atcoder.jp/favicon.ico" data-src2="https://logos.hunter.io/atcoder.jp" alt="AtCoder logo" width="64" height="64" loading="lazy">
+                    <span class="site-name">AtCoder</span>
+                </a>
+                <a class="site-card" href="https://codeforces.com/" target="_blank" rel="noopener">
+                    <img class="site-logo" src="https://codeforces.com/favicon.ico" data-src2="https://logos.hunter.io/codeforces.com" alt="Codeforces logo" width="64" height="64" loading="lazy">
+                    <span class="site-name">Codeforces</span>
+                </a>
+                <a class="site-card" href="https://www.acgo.cn/" target="_blank" rel="noopener">
+                    <img class="site-logo" src="https://www.acgo.cn/favicon.ico" data-src2="https://logos.hunter.io/www.acgo.cn" alt="ACGO logo" width="64" height="64" loading="lazy">
+                    <span class="site-name">ACGO</span>
+                </a>
+                <a class="site-card" href="https://www.python.org/" target="_blank" rel="noopener">
+                    <img class="site-logo" src="https://www.python.org/favicon.ico" data-src2="https://logos.hunter.io/www.python.org" alt="Python logo" width="64" height="64" loading="lazy">
+                    <span class="site-name">Python</span>
+                </a>
+                <a class="site-card" href="https://www.arduino.cc/" target="_blank" rel="noopener">
+                    <img class="site-logo" src="https://www.arduino.cc/favicon.ico" data-src2="https://logos.hunter.io/www.arduino.cc" alt="Arduino logo" width="64" height="64" loading="lazy">
+                    <span class="site-name">Arduino</span>
+                </a>
+                <a class="site-card" href="https://www.scratchfoundation.org/" target="_blank" rel="noopener">
+                    <img class="site-logo" src="https://www.scratchfoundation.org/favicon.ico" data-src2="https://logos.hunter.io/www.scratchfoundation.org" alt="Scratch Foundation logo" width="64" height="64" loading="lazy">
+                    <span class="site-name">Scratch Foundation</span>
+                </a>
+                <a class="site-card" href="https://shequ.codemao.cn/" target="_blank" rel="noopener">
+                    <img class="site-logo" src="https://shequ.codemao.cn/favicon.ico" data-src2="https://logos.hunter.io/shequ.codemao.cn" alt="编程猫社区 logo" width="64" height="64" loading="lazy">
+                    <span class="site-name">编程猫社区</span>
+                </a>
+                <a class="site-card" href="https://www.ccf.org.cn/" target="_blank" rel="noopener">
+                    <img class="site-logo" src="https://www.ccf.org.cn/favicon.ico" data-src2="https://logos.hunter.io/www.ccf.org.cn" alt="CCF logo" width="64" height="64" loading="lazy">
+                    <span class="site-name">CCF</span>
+                </a>
+                <a class="site-card" href="https://dasai.lanqiao.cn/" target="_blank" rel="noopener">
+                    <img class="site-logo" src="https://dasai.lanqiao.cn/favicon.ico" data-src2="https://logos.hunter.io/dasai.lanqiao.cn" alt="蓝桥杯 logo" width="64" height="64" loading="lazy">
+                    <span class="site-name">蓝桥杯</span>
+                </a>
             </div>
         </div>
 
@@ -1278,7 +1445,55 @@ void main() {
                 });
         })();
     </script>
-    <script>/* 暗色模式切换 */
+    <script>/* 站点图标：favicon.ico → Hunter → 通用占位图（带超时，避免某个站一直挂起） */
+        (function () {
+            var FALLBACK = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='18' fill='none' stroke='%2394a3b8' stroke-width='4'/%3E%3Cellipse cx='50' cy='50' rx='8' ry='18' fill='none' stroke='%2394a3b8' stroke-width='4'/%3E%3Cpath d='M32 50h36M35 40h30M35 60h30' stroke='%2394a3b8' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E";
+            var WAIT = 6000;
+
+            Array.prototype.forEach.call(document.querySelectorAll('.site-logo'), function (img) {
+                var timer = null;
+
+                function stop() {
+                    if (timer) { clearTimeout(timer); timer = null; }
+                }
+
+                function watch() {
+                    stop();
+                    timer = setTimeout(function () {
+                        if (img.dataset.ok) return;
+                        img.dispatchEvent(new Event('error'));
+                    }, WAIT);
+                }
+
+                if (img.complete && img.naturalWidth > 0) {
+                    img.dataset.ok = '1';
+                    return;
+                }
+
+                img.addEventListener('load', function () {
+                    if (!img.naturalWidth) return;
+                    img.dataset.ok = '1';
+                    stop();
+                });
+
+                img.addEventListener('error', function () {
+                    stop();
+                    if (!img.dataset.retried && img.dataset.src2) {
+                        img.dataset.retried = '1';
+                        img.src = img.dataset.src2;
+                        watch();
+                        return;
+                    }
+                    if (img.dataset.fallback) return;
+                    img.dataset.fallback = '1';
+                    img.dataset.ok = '1';
+                    img.src = FALLBACK;
+                });
+
+                watch();
+            });
+        })();
+    </script>    <script>/* 暗色模式切换 */
         (function () {
             var root = document.documentElement;
             var btn = document.getElementById('themeToggle');
