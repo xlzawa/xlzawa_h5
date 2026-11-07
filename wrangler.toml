@@ -1,0 +1,21 @@
+#:schema node_modules/wrangler/config-schema.json
+# Cloudflare Pages 部署配置
+#
+# 这个项目是"单文件静态页"：xlzawa.html 本身就是整站
+# （CSS、JS、3D 渲染器、皮肤贴图全部内联），没有构建步骤。
+# 所以把「输出目录」直接指向仓库根目录，wrangler 原样上传即可。
+
+name = "xlzawa-h5"
+compatibility_date = "2025-11-01"
+pages_build_output_dir = "."
+
+# 部署：
+#   npx wrangler pages deploy          # 读取本文件里的 name 与目录
+#   npx wrangler pages deploy . --project-name xlzawa-h5   # 显式指定
+#
+# 若走 Cloudflare 控制台的 Git 集成：
+#   构建命令  —— 留空（无构建）
+#   输出目录  —— /
+#
+# 根路径 `/` 由同目录下的 _redirects 代理到 /xlzawa.html，
+# 所以访客直接打开域名就能看到首页。

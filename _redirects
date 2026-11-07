@@ -1,0 +1,4 @@
+# Cloudflare Pages 的 rewrite（proxy）规则：把根路径映射到单文件页面
+# 语法：[source] [destination] [code]
+# 200 = 代理（URL 保持为 /，内容来自 /xlzawa.html）
+/  /xlzawa.html  200
